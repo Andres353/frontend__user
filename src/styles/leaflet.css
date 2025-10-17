@@ -1,0 +1,62 @@
+/* Estilos personalizados para Leaflet */
+
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.leaflet-popup-content {
+  margin: 12px 16px;
+  line-height: 1.4;
+}
+
+.leaflet-popup-tip {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Estilos para el botón de geolocalización */
+.leaflet-control-locate {
+  background: white;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-radius: 4px;
+}
+
+.leaflet-control-locate a {
+  background-color: #22c55e;
+  color: white;
+}
+
+.leaflet-control-locate a:hover {
+  background-color: #16a34a;
+}
+
+/* Estilos para marcadores personalizados */
+.custom-marker {
+  background-color: #22c55e;
+  border: 2px solid white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Animaciones suaves */
+.leaflet-zoom-animated {
+  transition: transform 0.25s ease;
+}
+
+/* Estilos para el mapa en modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .leaflet-container {
+    background: #1f2937;
+  }
+  
+  .leaflet-popup-content-wrapper {
+    background: #374151;
+    color: #f9fafb;
+  }
+}
