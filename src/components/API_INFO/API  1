@@ -1,0 +1,562 @@
+# 📚 API Completa - Business Dashboard Backend
+
+## 🚀 Información General
+
+- **Base URL**: `http://localhost:3001/api`
+- **Documentación Swagger**: `http://localhost:3001/api-docs`
+- **Versión**: 1.0.0
+- **Autenticación**: JWT Bearer Token (excepto login/register)
+
+---
+
+## 🔐 **AUTHENTICATION ENDPOINTS**
+
+### **POST /api/auth/register**
+Registrar una nueva empresa
+
+**Request Body:**
+```json
+{
+  "name": "Nombre de la empresa",
+  "email": "email@empresa.com",
+  "password": "contraseña123",
+  "categoryName": "Restaurante",
+  "categoryCode": "código_categoría",
+  "companyPrice": "normal"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Company registered successfully",
+  "token": "jwt_token_here",
+  "company": {
+    "id": "company_id",
+    "name": "Nombre de la empresa",
+    "email": "email@empresa.com",
+    "categoryName": "Restaurante",
+    "status": "ACTIVE"
+  }
+}
+```
+
+### **POST /api/auth/login**
+Iniciar sesión
+
+**Request Body:**
+```json
+{
+  "email": "agcastel75@gmail.com",
+  "password": "123456"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Login successful",
+  "token": "jwt_token_here",
+  "company": {
+    "id": "company_id",
+    "name": "Andres Gabriel Castel",
+    "email": "agcastel75@gmail.com",
+    "categoryName": "Restaurante",
+    "status": "ACTIVE",
+    "image": "logo_url",
+    "imageP": "logo_secundario_url"
+  }
+}
+```
+
+### **GET /api/auth/profile**
+Obtener perfil de la empresa (Requiere autenticación)
+
+**Headers:**
+```
+Authorization: Bearer jwt_token_here
+```
+
+**Response:**
+```json
+{
+  "id": "company_id",
+  "name": "Andres Gabriel Castel",
+  "email": "agcastel75@gmail.com",
+  "categoryName": "Restaurante",
+  "status": "ACTIVE",
+  "image": "logo_url",
+  "imageP": "logo_secundario_url",
+  "companyPrice": "normal",
+  "commission": "20"
+}
+```
+
+### **PUT /api/auth/profile**
+Actualizar perfil de la empresa (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "name": "Nuevo nombre",
+  "email": "nuevo@email.com",
+  "categoryName": "Nueva categoría"
+}
+```
+
+### **PUT /api/auth/change-password**
+Cambiar contraseña (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "currentPassword": "contraseña_actual",
+  "newPassword": "nueva_contraseña"
+}
+```
+
+---
+
+## 🏢 **BRANCHES ENDPOINTS**
+
+### **GET /api/branches**
+Obtener todas las sucursales de la empresa (Requiere autenticación)
+
+**Query Parameters:**
+- `page` (opcional): Número de página (default: 1)
+- `limit` (opcional): Elementos por página (default: 20)
+- `search` (opcional): Búsqueda por nombre
+- `status` (opcional): Filtrar por estado (true/false)
+
+**Response:**
+```json
+{
+  "branches": [
+    {
+      "id": "branch_id",
+      "sectorName": "Sucursal Principal",
+      "branCode": "b7d31acb-2dea-4e3c-b3e9-0bf7362f1375",
+      "status": true,
+      "wpp": "23525353",
+      "lat": -17.38895034790039,
+      "Long": -66.1562271118164,
+      "company": {
+        "id": "company_id",
+        "name": "Andres Gabriel Castel",
+        "image": "logo_url"
+      }
+    }
+  ],
+  "totalPages": 1,
+  "currentPage": 1,
+  "total": 1
+}
+```
+
+### **GET /api/branches/:id**
+Obtener sucursal específica (Requiere autenticación)
+
+### **POST /api/branches**
+Crear nueva sucursal (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "sectorName": "Nueva Sucursal",
+  "branCode": "código_único",
+  "wpp": "12345678",
+  "lat": -17.38895034790039,
+  "Long": -66.1562271118164,
+  "password": "contraseña_sucursal"
+}
+```
+
+### **PUT /api/branches/:id**
+Actualizar sucursal (Requiere autenticación)
+
+### **DELETE /api/branches/:id**
+Eliminar sucursal (Requiere autenticación)
+
+---
+
+## 🍕 **PRODUCTS ENDPOINTS**
+
+### **GET /api/products**
+Obtener todos los productos (Requiere autenticación)
+
+**Query Parameters:**
+- `page` (opcional): Número de página
+- `limit` (opcional): Elementos por página
+- `search` (opcional): Búsqueda por nombre
+- `category` (opcional): Filtrar por categoría
+- `status` (opcional): Filtrar por estado
+
+**Response:**
+```json
+{
+  "products": [
+    {
+      "id": "product_id",
+      "name": "Pizza Interminable",
+      "description": "Pizza de 24 porciones",
+      "pricing": 300,
+      "status": 1,
+      "visibleItem": true,
+      "categoryProductId": "category_id",
+      "variables": ["variable_id"]
+    }
+  ],
+  "totalPages": 1,
+  "currentPage": 1,
+  "total": 4
+}
+```
+
+### **GET /api/products/:id**
+Obtener producto específico (Requiere autenticación)
+
+### **POST /api/products**
+Crear nuevo producto (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "name": "Nuevo Producto",
+  "description": "Descripción del producto",
+  "pricing": 50,
+  "categoryProductId": "category_id",
+  "status": 1,
+  "visibleItem": true
+}
+```
+
+### **PUT /api/products/:id**
+Actualizar producto (Requiere autenticación)
+
+### **DELETE /api/products/:id**
+Eliminar producto (Requiere autenticación)
+
+### **GET /api/products/categories**
+Obtener categorías para productos (Requiere autenticación)
+
+---
+
+## 📦 **ORDERS ENDPOINTS**
+
+### **GET /api/orders**
+Obtener todos los pedidos (Requiere autenticación)
+
+**Query Parameters:**
+- `page` (opcional): Número de página
+- `limit` (opcional): Elementos por página
+- `status` (opcional): Filtrar por estado
+- `search` (opcional): Búsqueda
+- `dateFrom` (opcional): Fecha desde
+- `dateTo` (opcional): Fecha hasta
+
+**Response:**
+```json
+{
+  "orders": [
+    {
+      "id": "order_id",
+      "orderNumber": "ORD-000001",
+      "customerName": "Cliente Test",
+      "customerPhone": "12345678",
+      "total": 600,
+      "status": "pending",
+      "paymentMethod": "cash",
+      "createdAt": "2023-11-29T18:47:53.000Z"
+    }
+  ],
+  "totalPages": 1,
+  "currentPage": 1,
+  "total": 1,
+  "stats": {
+    "totalOrders": 1,
+    "totalRevenue": 600,
+    "avgOrderValue": 600
+  }
+}
+```
+
+### **GET /api/orders/:id**
+Obtener pedido específico (Requiere autenticación)
+
+### **POST /api/orders**
+Crear nuevo pedido (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "customerName": "Cliente Test",
+  "customerPhone": "12345678",
+  "customerAddress": "Dirección de prueba",
+  "customerEmail": "cliente@email.com",
+  "items": [
+    {
+      "productId": "product_id",
+      "quantity": 2,
+      "variables": {}
+    }
+  ],
+  "notes": "Comentarios",
+  "paymentMethod": "cash",
+  "deliveryFee": 0,
+  "tax": 0
+}
+```
+
+### **PATCH /api/orders/:id/status**
+Actualizar estado del pedido (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "status": "confirmed",
+  "driverId": "driver_id"
+}
+```
+
+**Estados válidos:**
+- `pending`, `confirmed`, `preparing`, `ready`, `out_for_delivery`, `delivered`, `cancelled`
+
+### **GET /api/orders/stats/overview**
+Obtener estadísticas de pedidos (Requiere autenticación)
+
+**Query Parameters:**
+- `period` (opcional): `today`, `week`, `month`
+
+---
+
+## 🚀 **MICROSERVICE ENDPOINTS**
+
+### **POST /api/orders/pedidos-ms/order-add**
+Crear pedido vía microservicio (NO requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "clientCode": "Cliente Test",
+  "locationId": "b7d31acb-2dea-4e3c-b3e9-0bf7362f1375",
+  "total": 600,
+  "nit": "123456789",
+  "phone": 12345678,
+  "entcode": "ENT001",
+  "comments": "Comentarios de prueba",
+  "paymentMethod": "cash",
+  "type": "delivery",
+  "inRestaurant": false,
+  "initialLocation": "Dirección de prueba",
+  "products": [
+    {
+      "itemCode": "c2f515b6-2aab-400e-929b-1e02d1caa19a",
+      "quantity": 2,
+      "nombre": "Pizza Interminable",
+      "price": 300,
+      "total": 600,
+      "pvs": [
+        {
+          "name": "Tamaño",
+          "pricing": [
+            {
+              "name": "Grande",
+              "price": 10
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "codeError": "SUCCESS",
+  "msgError": "Pedido creado exitosamente",
+  "orderId": "order_id",
+  "orderNumber": "ORD-000001"
+}
+```
+
+**Códigos de error:**
+- `VALIDATION_ERROR`: Error de validación
+- `BRANCH_NOT_FOUND`: Sucursal no encontrada
+- `BRANCH_INACTIVE`: Sucursal inactiva
+- `COMPANY_NOT_FOUND`: Empresa no encontrada
+- `PRODUCT_NOT_FOUND`: Producto no encontrado
+- `SERVER_ERROR`: Error interno del servidor
+
+---
+
+## 📂 **CATEGORIES ENDPOINTS**
+
+### **GET /api/categories**
+Obtener todas las categorías (Requiere autenticación)
+
+### **GET /api/categories/:id**
+Obtener categoría específica (Requiere autenticación)
+
+### **POST /api/categories**
+Crear nueva categoría (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "categoryName": "Nueva Categoría",
+  "waitingTime": "30",
+  "status": 1
+}
+```
+
+### **PUT /api/categories/:id**
+Actualizar categoría (Requiere autenticación)
+
+### **DELETE /api/categories/:id**
+Eliminar categoría (Requiere autenticación)
+
+---
+
+## 🔧 **PRODUCT VARIABLES ENDPOINTS**
+
+### **GET /api/product-variables/product/:productId**
+Obtener variables de un producto (Requiere autenticación)
+
+### **POST /api/product-variables/product/:productId**
+Crear variable para un producto (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "name": "Tamaño",
+  "canMany": false,
+  "required": true,
+  "instructions": "Elige el tamaño",
+  "quantity": 1
+}
+```
+
+### **POST /api/product-variables/:variableId/options**
+Agregar opción de precio a una variable (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "name": "Grande",
+  "price": 10
+}
+```
+
+---
+
+## 🛵 **MOTO ENDPOINTS**
+
+### **POST /api/moto**
+Crear solicitud de moto (Requiere autenticación)
+
+**Request Body:**
+```json
+{
+  "pickupAddress": {
+    "address": "Dirección de recogida",
+    "lat": -17.38895034790039,
+    "lng": -66.1562271118164
+  },
+  "deliveryAddress": {
+    "address": "Dirección de entrega",
+    "lat": -17.38895034790039,
+    "lng": -66.1562271118164
+  },
+  "requestNumber": "REQ-001",
+  "description": "Descripción del envío",
+  "priority": "medium"
+}
+```
+
+### **GET /api/moto**
+Obtener todas las solicitudes de moto (Requiere autenticación)
+
+---
+
+## 💰 **PRICING ENDPOINTS**
+
+### **GET /api/pricing**
+Obtener precios (Requiere autenticación)
+
+### **POST /api/pricing**
+Crear nuevo precio (Requiere autenticación)
+
+---
+
+## 🔑 **CREDENCIALES DE PRUEBA**
+
+### **Empresa:**
+- **Email**: `agcastel75@gmail.com`
+- **Contraseña**: `123456`
+- **Nombre**: Andres Gabriel Castel
+
+### **Sucursal:**
+- **Código**: `b7d31acb-2dea-4e3c-b3e9-0bf7362f1375`
+- **Nombre**: Sucursal Principal
+- **Contraseña**: `123456`
+
+### **Producto:**
+- **Código**: `c2f515b6-2aab-400e-929b-1e02d1caa19a`
+- **Nombre**: Pizza Interminable
+- **Precio**: 300
+
+---
+
+## 🚨 **CÓDIGOS DE ERROR COMUNES**
+
+| Código | Descripción |
+|--------|-------------|
+| `VALIDATION_ERROR` | Error de validación de datos |
+| `BRANCH_NOT_FOUND` | Sucursal no encontrada |
+| `BRANCH_INACTIVE` | Sucursal inactiva |
+| `COMPANY_NOT_FOUND` | Empresa no encontrada |
+| `PRODUCT_NOT_FOUND` | Producto no encontrado |
+| `SERVER_ERROR` | Error interno del servidor |
+| `UNAUTHORIZED` | No autorizado (token inválido) |
+| `FORBIDDEN` | Acceso denegado |
+
+---
+
+## 📝 **NOTAS IMPORTANTES**
+
+1. **Autenticación**: La mayoría de endpoints requieren el header `Authorization: Bearer token`
+2. **Paginación**: Los endpoints de listado soportan `page` y `limit`
+3. **Búsqueda**: Muchos endpoints soportan parámetro `search`
+4. **Filtros**: Usa `status`, `category`, `dateFrom`, `dateTo` según el endpoint
+5. **Swagger**: Accede a `http://localhost:3001/api-docs` para documentación interactiva
+6. **Microservicio**: El endpoint `/pedidos-ms/order-add` NO requiere autenticación
+
+---
+
+## 🛠️ **COMANDOS ÚTILES**
+
+### **Iniciar servidor:**
+```bash
+npm start
+```
+
+### **Ejecutar seed data:**
+```bash
+node src/scripts/seedData.js
+```
+
+### **Probar endpoint de pedidos:**
+```bash
+node src/scripts/testOrderMicroservice.js
+```
+
+### **Verificar salud del backend:**
+```bash
+node src/scripts/checkBackendHealth.js
+```
+
+---
+
+*Documentación generada automáticamente - Business Dashboard Backend v1.0.0*

@@ -56,11 +56,12 @@ export const Login = () => {
       console.log('Login success with user data:', data) // Debug log
       login(data.user, data.token)
       toast.success('¡Bienvenido!')
-      navigate('/profile')
+      navigate('/addresses')
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       console.error('Login error:', error)
-      toast.error(error.message || 'Error en el login')
+      const message = error instanceof Error ? error.message : (typeof error === 'string' ? error : 'Error en el login')
+      toast.error(message)
     },
   })
 
@@ -74,7 +75,7 @@ export const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-primary-green rounded-lg flex items-center justify-center">
+          <div className="mx-auto h-12 w-12 bg-primary-orange rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-xl">S</span>
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
@@ -84,7 +85,7 @@ export const Login = () => {
             ¿No tienes cuenta?{' '}
             <Link
               to="/register"
-              className="font-medium text-primary-green hover:text-green-600"
+              className="font-medium text-primary-orange hover:text-green-600"
             >
               Regístrate aquí
             </Link>
@@ -142,7 +143,7 @@ export const Login = () => {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-primary-green focus:ring-primary-blue border-gray-300 rounded"
+                    className="h-4 w-4 text-primary-orange focus:ring-primary-blue border-gray-300 rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                     Recordarme
@@ -150,7 +151,7 @@ export const Login = () => {
                 </div>
 
                 <div className="text-sm">
-                  <a href="#" className="font-medium text-primary-green hover:text-green-600">
+                  <a href="#" className="font-medium text-primary-orange hover:text-green-600">
                     ¿Olvidaste tu contraseña?
                   </a>
                 </div>
@@ -183,10 +184,11 @@ export const Login = () => {
               <GoogleLoginButton
                 onSuccess={() => {
                   toast.success('¡Bienvenido con Google!')
-                  navigate('/profile')
+                  navigate('/addresses')
                 }}
-                onError={(error) => {
-                  toast.error(error)
+                onError={(error: unknown) => {
+                  const message = error instanceof Error ? error.message : String(error)
+                  toast.error(message)
                 }}
               />
             </div>
@@ -201,7 +203,7 @@ export const Login = () => {
             ¿Necesitas verificar tu WhatsApp?{' '}
             <Link
               to="/verify-whatsapp"
-              className="font-medium text-primary-green hover:text-green-600"
+              className="font-medium text-primary-orange hover:text-green-600"
             >
               Verificar número
             </Link>

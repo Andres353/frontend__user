@@ -42,14 +42,32 @@ export const GoogleLoginButton = ({ onSuccess, onError }: GoogleLoginButtonProps
           const buttonDiv = document.getElementById('google-signin-button')
           if (buttonDiv) {
             console.log('🎨 Renderizando botón de Google...')
-            window.google.accounts.id.renderButton(buttonDiv, {
-              theme: 'outline',
-              size: 'large',
-              text: 'continue_with',
-              shape: 'rectangular',
-              width: '100%'
-            })
-            console.log('✅ Botón de Google renderizado correctamente')
+            try {
+              // Calcular un ancho válido (GSI solo acepta valores numéricos entre 120 y 400)
+              const containerWidth = buttonDiv.offsetWidth || 0
+              const validWidth = Math.min(400, Math.max(120, containerWidth || 320))
+              window.google.accounts.id.renderButton(buttonDiv, {
+                theme: 'outline',
+                size: 'large',
+                text: 'continue_with',
+                shape: 'rectangular',
+                width: validWidth
+              })
+              console.log('✅ Botón de Google renderizado correctamente')
+            } catch (renderError) {
+              console.error('❌ Error al renderizar botón de Google:', renderError)
+              // Mostrar mensaje de error específico
+              buttonDiv.innerHTML = `
+                <div class="p-4 border border-red-300 rounded-md bg-red-50">
+                  <p class="text-red-800 text-sm">
+                    <strong>Error de configuración de Google:</strong><br>
+                    El origen actual (${window.location.origin}) no está autorizado.<br>
+                    <span class="text-xs">Contacta al administrador para agregar esta URL a Google Cloud Console.</span>
+                  </p>
+                </div>
+              `
+              onError?.('Error de configuración de Google OAuth')
+            }
           }
         }
         
@@ -167,7 +185,7 @@ export const GoogleLoginButton = ({ onSuccess, onError }: GoogleLoginButtonProps
           disabled
           className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 cursor-not-allowed"
         >
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-500 mr-2"></div>
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500 mr-2"></div>
           Inicializando Google Login...
         </button>
         <p className="text-xs text-gray-400 mt-1 text-center">
@@ -201,6 +219,20 @@ export const GoogleLoginButton = ({ onSuccess, onError }: GoogleLoginButtonProps
         <div className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2"></div>
           Iniciando sesión...
+        </div>
+      )}
+      
+      {/* Mensaje de ayuda para desarrollo */}
+      {!isGoogleLoaded && (
+        <div className="mt-4 p-4 border border-yellow-300 rounded-md bg-yellow-50">
+          <p className="text-yellow-800 text-sm">
+            <strong>⚠️ Google Login no disponible</strong>
+            <br />
+            <span className="text-xs">
+              Para habilitar Google Login, agrega <code className="bg-yellow-100 px-1 rounded">{window.location.origin}</code> 
+              a las URLs autorizadas en Google Cloud Console.
+            </span>
+          </p>
         </div>
       )}
     </div>

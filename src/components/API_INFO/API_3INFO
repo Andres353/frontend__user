@@ -1,0 +1,950 @@
+# 🚀 API Completa - Santiago Pedidos MS
+
+## 📋 Información General
+
+**Microservicio:** Santiago Pedidos MS  
+**Versión:** 1.0.0  
+**URL Base:** `http://localhost:4000/pedidos-ms`  
+**Swagger UI:** `http://localhost:4000/swagger-ui.html`  
+**Puerto:** 4000  
+**Base de Datos:** MongoDB  
+
+---
+
+## 🔗 Índice de Endpoints
+
+### 📦 **Gestión de Pedidos**
+- [GET /get-order](#1-get-get-order) - Obtener lista de pedidos (paginado)
+- [GET /get-order-user](#2-get-get-order-user) - Obtener pedidos de usuario offline
+- [GET /get-order-user-online](#3-get-get-order-user-online) - Obtener pedidos de usuario online
+- [GET /get-order-delivery](#4-get-get-order-delivery) - Obtener pedidos de delivery
+- [GET /get-order-delivery-date](#5-get-get-order-delivery-date) - Obtener pedidos de delivery por fechas
+- [GET /get-order-company](#6-get-get-order-company) - Obtener pedidos de empresa
+- [GET /get-order-by](#7-get-get-order-by) - Obtener pedidos por usuario (paginado)
+- [GET /get-order-branch](#8-get-get-order-branch) - Obtener pedidos de sucursal
+- [GET /get-order-branch-date](#9-get-get-order-branch-date) - Obtener pedidos de sucursal por fechas
+
+### ➕ **Creación de Pedidos**
+- [POST /order-add](#10-post-order-add) - Crear nuevo pedido
+- [POST /order-add-package](#11-post-order-add-package) - Crear pedido tipo paquete
+- [POST /order-add-offline](#12-post-order-add-offline) - Crear pedido offline
+- [POST /order-add-branch](#13-post-order-add-branch) - Crear pedido desde sucursal
+
+### 🔄 **Actualización de Pedidos**
+- [PUT /order-update](#14-put-order-update) - Actualizar estado de pedido
+- [PUT /change-visibility/{id}](#15-put-change-visibilityid) - Cambiar visibilidad de pedido
+- [POST /add-delivery-manually](#16-post-add-delivery-manually) - Asignar delivery manualmente
+
+### 🆘 **Sistema SOS**
+- [GET /send-user-noti](#17-get-send-user-noti) - Enviar notificación SOS a usuario
+- [GET /send-delivery-noti](#18-get-send-delivery-noti) - Enviar notificación SOS a delivery
+- [GET /get-sos-list](#19-get-get-sos-list) - Obtener lista de pedidos SOS
+- [POST /sos](#20-post-sos) - Crear alerta SOS
+
+### 📊 **Dashboard y Estadísticas**
+- [GET /dashboard/stats/{entCode}](#21-get-dashboardstatsentcode) - Estadísticas del dashboard
+- [GET /dashboard/hourly-stats/{entCode}](#22-get-dashboardhourly-statsentcode) - Estadísticas por hora
+
+### 📸 **Gestión de Imágenes**
+- [POST /upload-img](#23-post-upload-img) - Subir imagen de pedido
+- [GET /images/get/{id}](#24-get-imagesgetid) - Obtener imagen por ID
+
+### ⭐ **Reseñas**
+- [GET /delivery-reviews](#25-get-delivery-reviews) - Obtener reseñas de delivery
+
+---
+
+## 📦 Gestión de Pedidos
+
+### 1. GET /get-order
+
+**Descripción:** Obtiene una lista paginada de todos los pedidos.
+
+**Parámetros de Query:**
+- `page` (int, requerido): Número de página (default: 0)
+- `size` (int, requerido): Tamaño de la página (default: 0)
+
+**Respuesta Exitosa:**
+```json
+{
+  "ordersData": [
+    {
+      "id": "string",
+      "clientName": "string",
+      "clientCode": "string",
+      "deliveryCode": "string",
+      "deliveryName": "string",
+      "creationDate": "string",
+      "urlEmpresa": "string",
+      "total": 0,
+      "status": 0,
+      "orderCode": "string",
+      "entName": "string",
+      "cel": "string",
+      "tel": "string",
+      "auxCel": "string",
+      "sizePaquete": "string",
+      "nit": "string",
+      "razonSocial": "string",
+      "location": {
+        "locationEnt": "string",
+        "latEnt": 0,
+        "lngEnt": 0,
+        "locationUser": "string",
+        "latUser": 0,
+        "lngUser": 0,
+        "initialLocationLat": 0,
+        "initialLocationLng": 0,
+        "initialLocation": "string",
+        "alias": "string"
+      },
+      "comments": "string",
+      "visibility": true,
+      "products": [
+        {
+          "itemCode": "string",
+          "quantity": 0,
+          "nombre": "string",
+          "price": 0,
+          "total": 0,
+          "pvs": [
+            {
+              "name": "string",
+              "pricing": [
+                {
+                  "name": "string",
+                  "price": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "type": "string",
+      "entImg": "string",
+      "imgPedido": "string",
+      "chatData": {
+        "udChat": "string",
+        "readDoChatData": true,
+        "readUoChatData": true,
+        "uochat": "string",
+        "dochat": "string"
+      },
+      "lastUpdate": "string",
+      "waitingTime": "string",
+      "inRestaurant": true,
+      "paymentMethod": "string",
+      "motivo": "string",
+      "orderLit": "string",
+      "celular": "string",
+      "telefono": "string",
+      "comision": 0,
+      "fee": 0,
+      "by": "string",
+      "urlImg": "string",
+      "dateIMG": "string",
+      "urlPedido": ["string"],
+      "sosData": {
+        "deliveryCode": "string",
+        "orderid": "string",
+        "name": "string",
+        "msg": "string",
+        "lat": 0,
+        "lng": 0
+      },
+      "kilometersData": {
+        "distance": 0,
+        "price": 0,
+        "tiempoLimite": 0,
+        "generic": {
+          "codeError": "string",
+          "msgError": "string"
+        }
+      }
+    }
+  ],
+  "comisionTotal": 0,
+  "totalPages": 0,
+  "pageNumber": 0,
+  "entereza": {
+    "codeError": "string",
+    "msgError": "string"
+  }
+}
+```
+
+---
+
+### 2. GET /get-order-user
+
+**Descripción:** Obtiene todos los pedidos de un usuario offline.
+
+**Parámetros de Query:**
+- `userID` (string, requerido): ID del usuario offline
+
+**Respuesta:** Misma estructura que `/get-order`
+
+---
+
+### 3. GET /get-order-user-online
+
+**Descripción:** Obtiene todos los pedidos de un usuario online.
+
+**Parámetros de Query:**
+- `userID` (string, requerido): ID del usuario online
+
+**Respuesta:** Misma estructura que `/get-order`
+
+---
+
+### 4. GET /get-order-delivery
+
+**Descripción:** Obtiene todos los pedidos asignados a un delivery.
+
+**Parámetros de Query:**
+- `deliveryCode` (string, requerido): Código del delivery
+
+**Respuesta:** Misma estructura que `/get-order`
+
+---
+
+### 5. GET /get-order-delivery-date
+
+**Descripción:** Obtiene pedidos de un delivery en un rango de fechas.
+
+**Parámetros de Query:**
+- `deliveryCode` (string, requerido): Código del delivery
+- `fechaInicial` (string, requerido): Fecha inicial (formato: YYYY-MM-DD)
+- `fechaFinal` (string, requerido): Fecha final (formato: YYYY-MM-DD)
+
+**Respuesta:** Misma estructura que `/get-order`
+
+---
+
+### 6. GET /get-order-company
+
+**Descripción:** Obtiene todos los pedidos de una empresa.
+
+**Parámetros de Query:**
+- `branchCode` (string, requerido): Código de la sucursal/empresa
+
+**Respuesta:** Misma estructura que `/get-order`
+
+---
+
+### 7. GET /get-order-by
+
+**Descripción:** Obtiene pedidos filtrados por usuario con paginación.
+
+**Parámetros de Query:**
+- `user` (string, requerido): Usuario a filtrar
+- `page` (int, requerido): Número de página (default: 0)
+- `size` (int, requerido): Tamaño de la página (default: 0)
+
+**Respuesta:** Misma estructura que `/get-order`
+
+---
+
+### 8. GET /get-order-branch
+
+**Descripción:** Obtiene todos los pedidos de una sucursal específica.
+
+**Parámetros de Query:**
+- `branchCode` (string, requerido): Código de la sucursal
+
+**Respuesta:** Misma estructura que `/get-order`
+
+---
+
+### 9. GET /get-order-branch-date
+
+**Descripción:** Obtiene pedidos de una sucursal en un rango de fechas.
+
+**Parámetros de Query:**
+- `branchCode` (string, requerido): Código de la sucursal
+- `fechaInicial` (string, requerido): Fecha inicial (formato: YYYY-MM-DD)
+- `fechaFinal` (string, requerido): Fecha final (formato: YYYY-MM-DD)
+
+**Respuesta:** Misma estructura que `/get-order`
+
+---
+
+## ➕ Creación de Pedidos
+
+### 10. POST /order-add
+
+**Descripción:** Crea un nuevo pedido estándar.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "clientCode": "string",
+  "locationId": "string",
+  "total": 0,
+  "nit": "string",
+  "phone": 0,
+  "entcode": "string",
+  "comments": "string",
+  "paymentMethod": "string",
+  "type": "string",
+  "inRestaurant": true,
+  "initialLocation": "string",
+  "products": [
+    {
+      "itemCode": "string",
+      "quantity": 0,
+      "nombre": "string",
+      "price": 0,
+      "total": 0,
+      "pvs": [
+        {
+          "name": "string",
+          "pricing": [
+            {
+              "name": "string",
+              "price": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Parámetros:**
+- `clientCode` (string, requerido): Código del cliente
+- `locationId` (string, requerido): ID de la ubicación/sucursal
+- `total` (number, requerido): Total del pedido
+- `nit` (string, requerido): NIT del cliente
+- `phone` (number, requerido): Teléfono del cliente
+- `entcode` (string, requerido): Código de la empresa
+- `comments` (string, opcional): Comentarios del pedido
+- `paymentMethod` (string, requerido): Método de pago
+- `type` (string, requerido): Tipo de pedido (delivery/pickup)
+- `inRestaurant` (boolean, requerido): Si es en restaurante
+- `initialLocation` (string, requerido): Ubicación inicial
+- `products` (array, requerido): Lista de productos
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Pedido creado exitosamente"
+}
+```
+
+**Respuesta de Error:**
+```json
+{
+  "codeError": "COD868",
+  "msgError": "Sucursal no valida"
+}
+```
+
+---
+
+### 11. POST /order-add-package
+
+**Descripción:** Crea un pedido tipo paquete/envío.
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+```
+
+**Parámetros de Query:**
+- `clientCode` (string, requerido): Código del cliente
+- `comments` (string, requerido): Comentarios
+- `paymentMethod` (string, requerido): Método de pago
+- `initialLocation` (string, requerido): Ubicación inicial
+- `initialLat` (number, requerido): Latitud inicial
+- `initialLng` (number, requerido): Longitud inicial
+- `finalLat` (number, requerido): Latitud final
+- `finalLng` (number, requerido): Longitud final
+- `finalLocation` (string, requerido): Ubicación final
+- `auxCel` (string, opcional): Celular auxiliar
+- `price` (number, requerido): Precio del envío
+- `sizePaquete` (string, requerido): Tamaño del paquete
+
+**Request Body:**
+- `imgAux` (array): Imágenes auxiliares del paquete
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Pedido de paquete creado exitosamente"
+}
+```
+
+---
+
+### 12. POST /order-add-offline
+
+**Descripción:** Crea un pedido offline (sin usuario registrado).
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "clientCode": "string",
+  "locationID": "string",
+  "nit": "string",
+  "razonSocial": "string",
+  "total": 0,
+  "entcode": "string",
+  "comments": "string",
+  "paymentMethod": "string",
+  "deliveryCode": "string",
+  "orderLit": "string",
+  "by": "string",
+  "commission": 0,
+  "products": [
+    {
+      "itemCode": "string",
+      "quantity": 0,
+      "nombre": "string",
+      "price": 0,
+      "total": 0,
+      "pvs": [
+        {
+          "name": "string",
+          "pricing": [
+            {
+              "name": "string",
+              "price": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "price": 0,
+  "initialLocation": "string",
+  "finalLocation": "string"
+}
+```
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Pedido offline creado exitosamente"
+}
+```
+
+---
+
+### 13. POST /order-add-branch
+
+**Descripción:** Crea un pedido desde una sucursal específica.
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+```
+
+**Parámetros de Query:**
+- `clientCode` (string, requerido): Código del cliente
+- `comments` (string, requerido): Comentarios
+- `paymentMethod` (string, requerido): Método de pago
+- `initialLocation` (string, requerido): Ubicación inicial
+- `initialLat` (number, requerido): Latitud inicial
+- `initialLng` (number, requerido): Longitud inicial
+- `finalLat` (number, requerido): Latitud final
+- `finalLng` (number, requerido): Longitud final
+- `finalLocation` (string, requerido): Ubicación final
+- `auxCel` (string, opcional): Celular auxiliar
+- `price` (number, requerido): Precio
+- `sizePaquete` (string, requerido): Tamaño del paquete
+- `products` (string, requerido): Productos en formato JSON
+
+**Request Body:**
+- `imgAux` (array): Imágenes auxiliares
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Pedido de sucursal creado exitosamente"
+}
+```
+
+---
+
+## 🔄 Actualización de Pedidos
+
+### 14. PUT /order-update
+
+**Descripción:** Actualiza el estado de un pedido.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "orderCode": "string",
+  "status": 0,
+  "motivo": "string"
+}
+```
+
+**Parámetros:**
+- `orderCode` (string, requerido): Código del pedido
+- `status` (number, requerido): Nuevo estado del pedido
+- `motivo` (string, opcional): Motivo del cambio de estado
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Pedido actualizado exitosamente"
+}
+```
+
+---
+
+### 15. PUT /change-visibility/{id}
+
+**Descripción:** Cambia la visibilidad de un pedido.
+
+**Parámetros de Path:**
+- `id` (string): ID del pedido
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Visibilidad cambiada exitosamente"
+}
+```
+
+---
+
+### 16. POST /add-delivery-manually
+
+**Descripción:** Asigna un delivery a un pedido manualmente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "orderCode": "string",
+  "deliveryCode": "string"
+}
+```
+
+**Parámetros:**
+- `orderCode` (string, requerido): Código del pedido
+- `deliveryCode` (string, requerido): Código del delivery
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Delivery asignado exitosamente"
+}
+```
+
+---
+
+## 🆘 Sistema SOS
+
+### 17. GET /send-user-noti
+
+**Descripción:** Envía notificación SOS a un usuario.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Notificación SOS enviada"
+}
+```
+
+---
+
+### 18. GET /send-delivery-noti
+
+**Descripción:** Envía notificación SOS a un delivery.
+
+**Parámetros de Query:**
+- `idDelivery` (string, requerido): ID del delivery
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Notificación SOS enviada al delivery"
+}
+```
+
+---
+
+### 19. GET /get-sos-list
+
+**Descripción:** Obtiene la lista de pedidos con alertas SOS activas.
+
+**Respuesta Exitosa:**
+```json
+{
+  "dataBean": [
+    {
+      "deliveryCode": "string",
+      "orderID": "string",
+      "name": "string",
+      "msg": "string"
+    }
+  ],
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Lista SOS obtenida"
+  }
+}
+```
+
+---
+
+### 20. POST /sos
+
+**Descripción:** Crea una alerta SOS para un pedido.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "deliveryCode": "string",
+  "orderid": "string",
+  "name": "string",
+  "msg": "string",
+  "lat": 0,
+  "lng": 0
+}
+```
+
+**Parámetros:**
+- `deliveryCode` (string, requerido): Código del delivery
+- `orderid` (string, requerido): ID del pedido
+- `name` (string, requerido): Nombre de quien envía el SOS
+- `msg` (string, requerido): Mensaje del SOS
+- `lat` (number, requerido): Latitud actual
+- `lng` (number, requerido): Longitud actual
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "SOS creado exitosamente"
+}
+```
+
+---
+
+## 📊 Dashboard y Estadísticas
+
+### 21. GET /dashboard/stats/{entCode}
+
+**Descripción:** Obtiene estadísticas completas del dashboard para una empresa.
+
+**Parámetros de Path:**
+- `entCode` (string): Código de la empresa
+
+**Parámetros de Query:**
+- `startDate` (string, requerido): Fecha de inicio (formato: YYYY-MM-DD)
+- `endDate` (string, requerido): Fecha de fin (formato: YYYY-MM-DD)
+
+**Respuesta Exitosa:**
+```json
+{
+  "totalOrders": 0,
+  "totalRevenue": 0,
+  "avgOrderValue": 0,
+  "completedOrders": 0,
+  "canceledOrders": 0,
+  "completionRate": 0,
+  "statusDistribution": [
+    {
+      "status": 0,
+      "statusName": "string",
+      "count": 0,
+      "percentage": 0
+    }
+  ],
+  "topProducts": [
+    {
+      "productName": "string",
+      "productCode": "string",
+      "quantitySold": 0,
+      "revenue": 0
+    }
+  ],
+  "dailyRevenue": [
+    {
+      "date": "string",
+      "revenue": 0,
+      "orderCount": 0
+    }
+  ],
+  "paymentMethods": [
+    {
+      "paymentMethod": "string",
+      "count": 0,
+      "percentage": 0,
+      "totalAmount": 0
+    }
+  ],
+  "hourlyDistribution": {
+    "additionalProp1": 0,
+    "additionalProp2": 0,
+    "additionalProp3": 0
+  },
+  "branchName": "string",
+  "dateRange": "string"
+}
+```
+
+---
+
+### 22. GET /dashboard/hourly-stats/{entCode}
+
+**Descripción:** Obtiene estadísticas por hora para una empresa.
+
+**Parámetros de Path:**
+- `entCode` (string): Código de la empresa
+
+**Parámetros de Query:**
+- `startDate` (string, requerido): Fecha de inicio
+- `endDate` (string, requerido): Fecha de fin
+
+**Respuesta Exitosa:**
+```json
+{}
+```
+
+---
+
+## 📸 Gestión de Imágenes
+
+### 23. POST /upload-img
+
+**Descripción:** Sube una imagen asociada a un pedido.
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+```
+
+**Request Body:**
+- `id` (string, requerido): ID del pedido
+- `img` (file, requerido): Archivo de imagen
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Imagen subida exitosamente"
+}
+```
+
+---
+
+### 24. GET /images/get/{id}
+
+**Descripción:** Obtiene una imagen por su ID.
+
+**Parámetros de Path:**
+- `id` (string): ID de la imagen
+
+**Respuesta Exitosa:**
+```
+Content-Type: image/png
+[Binary image data]
+```
+
+---
+
+## ⭐ Reseñas
+
+### 25. GET /delivery-reviews
+
+**Descripción:** Obtiene las reseñas de un delivery específico.
+
+**Parámetros de Query:**
+- `deliveryCode` (string, requerido): Código del delivery
+
+**Respuesta Exitosa:**
+```json
+{
+  "message": "string",
+  "success": true,
+  "reviews": [
+    {
+      "id": "string",
+      "orderId": "string",
+      "clientName": "string",
+      "stars": 0,
+      "comments": "string",
+      "creationDate": "string",
+      "reviewType": "string"
+    }
+  ],
+  "averageStars": 0,
+  "totalReviews": 0,
+  "deliveryCode": "string",
+  "deliveryName": "string"
+}
+```
+
+---
+
+## 📊 Códigos de Error
+
+| Código | Descripción |
+|--------|-------------|
+| COD200 | Operación exitosa |
+| COD868 | Sucursal no válida |
+| COD500 | Error interno del servidor |
+| COD404 | No encontrado |
+| COD400 | Solicitud incorrecta |
+
+---
+
+## 🔧 Información Técnica
+
+### **Stack Tecnológico**
+- **Framework:** Spring Boot
+- **Base de Datos:** MongoDB
+- **Lenguaje:** Java 17+
+- **ORM:** Spring Data MongoDB
+- **Documentación:** Swagger/OpenAPI
+- **Build Tool:** Maven
+
+### **Arquitectura**
+- **Patrón:** Microservicio
+- **API:** REST
+- **Validación:** Jakarta Validation
+- **Respuestas:** GenericBean estandarizado
+
+### **Configuración**
+- **Puerto:** 4000
+- **Context Path:** /pedidos-ms
+- **Swagger UI:** /swagger-ui.html
+- **Base de Datos:** MongoDB
+
+---
+
+## 🚀 Ejemplos de Uso
+
+### **Crear un pedido:**
+```bash
+curl -X POST http://localhost:4000/pedidos-ms/order-add \
+  -H "Content-Type: application/json" \
+  -d '{
+    "clientCode": "CLI001",
+    "locationId": "b7d31acb-2dea-4e3c-b3e9-0bf7362f1375",
+    "total": 45.75,
+    "nit": "123456789",
+    "phone": 12345678,
+    "entcode": "ENT001",
+    "comments": "Sin cebolla",
+    "paymentMethod": "efectivo",
+    "type": "delivery",
+    "inRestaurant": false,
+    "initialLocation": "La Paz Centro",
+    "products": [
+      {
+        "itemCode": "PROD001",
+        "quantity": 2,
+        "nombre": "Pizza Margherita",
+        "price": 22.875,
+        "total": 45.75,
+        "pvs": [
+          {
+            "name": "Tamaño",
+            "pricing": [
+              {
+                "name": "Grande",
+                "price": 22.875
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }'
+```
+
+### **Obtener pedidos de un usuario:**
+```bash
+curl -X GET "http://localhost:4000/pedidos-ms/get-order-user?userID=USER123"
+```
+
+### **Actualizar estado de pedido:**
+```bash
+curl -X PUT http://localhost:4000/pedidos-ms/order-update \
+  -H "Content-Type: application/json" \
+  -d '{
+    "orderCode": "ORD123",
+    "status": 2,
+    "motivo": "En camino"
+  }'
+```
+
+### **Crear alerta SOS:**
+```bash
+curl -X POST http://localhost:4000/pedidos-ms/sos \
+  -H "Content-Type: application/json" \
+  -d '{
+    "deliveryCode": "DEL001",
+    "orderid": "ORD123",
+    "name": "Juan Pérez",
+    "msg": "Problema con el pedido",
+    "lat": -17.389782,
+    "lng": -66.1428
+  }'
+```
+
+---
+
+## 📝 Notas Importantes
+
+1. **Validación de Sucursales:** El `locationId` debe existir en la base de datos
+2. **Estados de Pedido:** Los estados son numéricos (0=Pendiente, 1=Confirmado, 2=En camino, etc.)
+3. **Paginación:** Los endpoints de listado soportan paginación con `page` y `size`
+4. **Fechas:** Formato requerido: YYYY-MM-DD
+5. **Imágenes:** Se aceptan archivos multipart/form-data
+6. **SOS:** Sistema de alertas de emergencia para deliveries
+7. **Dashboard:** Estadísticas en tiempo real para empresas
+8. **Reseñas:** Sistema de calificación para deliveries
+
+---
+
+## 🔗 Enlaces Útiles
+
+- **Swagger UI:** http://localhost:4000/swagger-ui.html
+- **API Base:** http://localhost:4000/pedidos-ms
+- **Documentación JSON:** http://localhost:4000/api-docs

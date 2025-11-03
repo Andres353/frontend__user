@@ -1,6 +1,9 @@
 // Configuración de Google Identity Services
 export const GOOGLE_CLIENT_ID = '867478989787-6h0re6ipld94akr6jif2vsrn6ngq6ffc.apps.googleusercontent.com'
 
+// Verificar si estamos en desarrollo
+const isDevelopment = import.meta.env.DEV
+
 // Variable global para almacenar el callback
 let globalGoogleCallback: ((response: any) => void) | null = null
 

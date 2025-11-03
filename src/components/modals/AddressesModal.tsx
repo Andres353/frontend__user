@@ -1,26 +1,31 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { PlusIcon, MapPinIcon, TrashIcon, PencilIcon, EyeIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, MapPinIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card'
 import { Modal } from '../../components/ui/Modal'
 import { LoadingSpinner } from '../../components/ui/Loading'
-import { MapComponent, DirectionsMap } from '../../components/maps/MapComponent'
+import { MapComponent } from '../../components/maps/MapComponent'
 import { apiService } from '../../services/api'
 import { useAuthStore } from '../../stores/authStore'
 import type { CreateDirectionRequest, UpdateDirectionRequest, Direction } from '../../types'
 
-export const Addresses = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+interface AddressesModalProps {
+  isOpen: boolean
+  onClose: () => void
+}
+
+export const AddressesModal = ({ isOpen, onClose }: AddressesModalProps) => {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingDirection, setEditingDirection] = useState<Direction | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
-  const [showMap, setShowMap] = useState(false)
   const [mapCenter, setMapCenter] = useState<[number, number]>([-17.389782, -66.1428]) // Cochabamba por defecto
   const [isGettingLocation, setIsGettingLocation] = useState(false)
   const { user } = useAuthStore()
+  const queryClient = useQueryClient()
 
   const {
     register,
@@ -34,26 +39,40 @@ export const Addresses = () => {
   // Cargar direcciones del usuario
   const { data: directionsData, isLoading, refetch } = useQuery({
     queryKey: ['directions', user?.id],
-    queryFn: () => apiService().getUserDirections(user?.id || ''),
-    enabled: !!user?.id,
+    queryFn: () => {
+      // Usar el ID del usuario para buscar las direcciones
+      const userId = user?.id || ''
+      console.log('🔍 Fetching directions for userId:', userId)
+      return apiService().getUserDirections(userId)
+    },
+    enabled: !!user?.id && isOpen,
   })
 
   // Mutación para crear dirección
   const createDirectionMutation = useMutation({
-    mutationFn: (data: CreateDirectionRequest) => apiService().createDirection(data),
+    mutationFn: (data: CreateDirectionRequest) => {
+      console.log('🔄 Calling createDirection with:', data)
+      return apiService().createDirection(data)
+    },
     onSuccess: (response) => {
+      console.log('✅ createDirection response:', response)
       if (response.codeError === 'COD200') {
+        console.log('✅ Dirección creada con ID:', response.msgError)
         toast.success('Dirección creada exitosamente')
-        setIsModalOpen(false)
+        setIsAddModalOpen(false)
         reset()
-        refetch()
+        // Invalidar cache para refrescar la lista
+        queryClient.invalidateQueries({ queryKey: ['directions', user?.id] })
+        console.log('🔄 Cache invalidated for directions')
       } else {
+        console.error('❌ Error from API:', response)
         toast.error(response.msgError || 'Error al crear dirección')
       }
     },
-    onError: (error) => {
-      console.error('Create direction error:', error)
-      toast.error('Error al crear dirección')
+    onError: (error: any) => {
+      console.error('❌ Create direction mutation error:', error)
+      console.error('Error details:', error.response?.data)
+      toast.error(`Error al crear dirección: ${error.response?.data?.msgError || error.message}`)
     },
   })
 
@@ -63,10 +82,11 @@ export const Addresses = () => {
     onSuccess: (response) => {
       if (response.codeError === 'COD200') {
         toast.success('Dirección actualizada exitosamente')
-        setIsModalOpen(false)
+        setIsAddModalOpen(false)
         setEditingDirection(null)
         reset()
-        refetch()
+        // Invalidar cache para refrescar la lista
+        queryClient.invalidateQueries({ queryKey: ['directions', user?.id] })
       } else {
         toast.error(response.msgError || 'Error al actualizar dirección')
       }
@@ -84,7 +104,8 @@ export const Addresses = () => {
       if (response.codeError === 'COD200') {
         toast.success('Dirección eliminada exitosamente')
         setDeleteConfirmId(null)
-        refetch()
+        // Invalidar cache para refrescar la lista
+        queryClient.invalidateQueries({ queryKey: ['directions', user?.id] })
       } else {
         toast.error(response.msgError || 'Error al eliminar dirección')
       }
@@ -99,6 +120,13 @@ export const Addresses = () => {
     console.log('Form data:', data) // Debug log
     console.log('Current user:', user) // Debug log
     
+    // Verificar que el usuario esté disponible
+    if (!user) {
+      toast.error('Usuario no autenticado. Por favor, inicia sesión nuevamente.')
+      onClose()
+      return
+    }
+    
     if (editingDirection) {
       // Actualizar dirección existente
       const updateData: UpdateDirectionRequest = {
@@ -109,15 +137,23 @@ export const Addresses = () => {
         url: data.url,
         locationID: editingDirection.id,
       }
+      console.log('Update data:', updateData) // Debug log
       updateDirectionMutation.mutate(updateData)
     } else {
       // Crear nueva dirección
-      if (user?.id) {
+      if (user?.email || user?.id) {
+        // Intentar primero con el ID del usuario, y si no funciona, usar email
+        // El backend parece esperar el ID de la base de datos, no el email
+        const userId = user.id || (user.email && user.email.includes('@') ? user.email : '')
+        
         const directionData = {
           ...data,
-          userId: user.id,
+          userId: userId,
         }
         console.log('Sending direction data:', directionData) // Debug log
+        console.log('Using userId:', userId) // Debug log
+        console.log('Using user.id:', user.id) // Debug log
+        console.log('Using user.email:', user.email) // Debug log
         createDirectionMutation.mutate(directionData)
       } else {
         toast.error('No se pudo obtener el ID del usuario')
@@ -128,7 +164,7 @@ export const Addresses = () => {
 
   const handleAddAddress = () => {
     setEditingDirection(null)
-    setIsModalOpen(true)
+    setIsAddModalOpen(true)
     reset()
     setIsGettingLocation(true)
     
@@ -145,7 +181,6 @@ export const Addresses = () => {
           toast.success('Ubicación obtenida automáticamente')
         },
         (error) => {
-          // Si falla la geolocalización, usar Cochabamba por defecto
           console.warn('Geolocation failed, using default location:', error)
           setMapCenter([-17.389782, -66.1428])
           setIsGettingLocation(false)
@@ -155,7 +190,6 @@ export const Addresses = () => {
         }
       )
     } else {
-      // Si no hay geolocalización, usar Cochabamba por defecto
       setMapCenter([-17.389782, -66.1428])
       setIsGettingLocation(false)
       toast('Geolocalización no disponible, usando ubicación por defecto', {
@@ -170,8 +204,8 @@ export const Addresses = () => {
     setValue('lat', direction.lat)
     setValue('lng', direction.lng)
     setValue('alias', direction.alias)
-    setMapCenter([direction.lat, direction.lng]) // Centrar en la dirección editada
-    setIsModalOpen(true)
+    setMapCenter([direction.lat, direction.lng])
+    setIsAddModalOpen(true)
   }
 
   const handleDeleteAddress = (directionId: string) => {
@@ -208,133 +242,89 @@ export const Addresses = () => {
   const handleMapLocationSelect = (lat: number, lng: number) => {
     setValue('lat', lat)
     setValue('lng', lng)
-    // No cambiar el centro del mapa automáticamente para evitar que se aleje
-    // setMapCenter([lat, lng])
     toast.success('Ubicación seleccionada en el mapa')
   }
 
-  const handleDirectionClick = (direction: Direction) => {
-    setMapCenter([direction.lat, direction.lng])
-    toast(`Vista centrada en: ${direction.alias}`, {
-      icon: 'ℹ️',
-    })
-  }
-
-  if (isLoading) {
-    return <LoadingSpinner size="lg" />
-  }
-
   const directions = directionsData?.locationData || []
+  
+  // Debug: Ver qué está retornando el API
+  console.log('🔍 Directions data:', directionsData)
+  console.log('📍 Directions count:', directions.length)
+  console.log('📍 Directions list:', directions)
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Mis Direcciones</h1>
-            <p className="mt-2 text-gray-600">
-              Gestiona tus direcciones de entrega
-            </p>
-          </div>
-          <div className="flex space-x-3">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowMap(!showMap)}
-            >
-              <EyeIcon className="h-5 w-5 mr-2" />
-              {showMap ? 'Ocultar Mapa' : 'Ver Mapa'}
-            </Button>
-            <Button onClick={handleAddAddress}>
+    <>
+      {/* Modal principal de direcciones */}
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Mis Direcciones"
+        size="xl"
+      >
+        <div className="space-y-6">
+          {/* Botón agregar dirección */}
+          <div className="flex justify-end">
+            <Button onClick={handleAddAddress} className="bg-orange-600 hover:bg-orange-700">
               <PlusIcon className="h-5 w-5 mr-2" />
               Agregar Dirección
             </Button>
           </div>
-        </div>
-      </div>
 
-      {/* Mapa de direcciones */}
-      {showMap && directions.length > 0 && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Mapa de Direcciones</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <DirectionsMap
-              directions={directions}
-              center={mapCenter}
-              onDirectionClick={handleDirectionClick}
-              height="400px"
-            />
-          </CardContent>
-        </Card>
-      )}
-
-      {directions.length === 0 ? (
-        <Card>
-          <CardContent className="text-center py-12">
-            <MapPinIcon className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">
-              No tienes direcciones
-            </h3>
-            <p className="mt-1 text-sm text-gray-500">
-              Agrega tu primera dirección para comenzar a recibir pedidos.
-            </p>
-            <div className="mt-6">
-              <Button onClick={handleAddAddress}>
-                <PlusIcon className="h-5 w-5 mr-2" />
-                Agregar Primera Dirección
-              </Button>
+          {/* Lista de direcciones */}
+          {isLoading ? (
+            <div className="flex justify-center py-8">
+              <LoadingSpinner size="lg" />
             </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {directions.map((direction) => (
-            <Card key={direction.id}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{direction.alias}</CardTitle>
-                  <div className="flex space-x-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleEditAddress(direction)}
-                    >
-                      <PencilIcon className="h-4 w-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleDeleteAddress(direction.id)}
-                    >
-                      <TrashIcon className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <div className="flex items-start space-x-2">
-                    <MapPinIcon className="h-5 w-5 text-gray-400 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-gray-900">{direction.direction}</p>
+          ) : directions.length === 0 ? (
+            <div className="text-center py-12">
+              <MapPinIcon className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-2 text-sm font-medium text-gray-900">
+                No tienes direcciones
+              </h3>
+              <p className="mt-1 text-sm text-gray-500">
+                Agrega tu primera dirección para comenzar a recibir pedidos.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {directions.map((direction) => (
+                <Card key={direction.id} className="p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 mb-1">{direction.alias}</h3>
+                      <p className="text-sm text-gray-600 truncate">{direction.direction}</p>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleEditAddress(direction)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <PencilIcon className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleDeleteAddress(direction.id)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
-                  <div className="text-xs text-gray-400">
-                    📍 Lat: {direction.lat.toFixed(6)}, Lng: {direction.lng.toFixed(6)}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </Modal>
 
       {/* Modal para agregar/editar dirección */}
       <Modal
-        isOpen={isModalOpen}
+        isOpen={isAddModalOpen}
         onClose={() => {
-          setIsModalOpen(false)
+          setIsAddModalOpen(false)
           setEditingDirection(null)
           reset()
         }}
@@ -370,72 +360,72 @@ export const Addresses = () => {
             })}
           />
 
-                 <div className="space-y-4">
-                   <div className="grid grid-cols-2 gap-4">
-                     <Input
-                       label="Latitud"
-                       type="number"
-                       step="any"
-                       placeholder="-17.389782"
-                       error={errors.lat?.message}
-                       {...register('lat', {
-                         required: 'La latitud es requerida',
-                         valueAsNumber: true,
-                       })}
-                     />
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Latitud"
+                type="number"
+                step="any"
+                placeholder="-17.389782"
+                error={errors.lat?.message}
+                {...register('lat', {
+                  required: 'La latitud es requerida',
+                  valueAsNumber: true,
+                })}
+              />
 
-                     <Input
-                       label="Longitud"
-                       type="number"
-                       step="any"
-                       placeholder="-66.1428"
-                       error={errors.lng?.message}
-                       {...register('lng', {
-                         required: 'La longitud es requerida',
-                         valueAsNumber: true,
-                       })}
-                     />
-                   </div>
+              <Input
+                label="Longitud"
+                type="number"
+                step="any"
+                placeholder="-66.1428"
+                error={errors.lng?.message}
+                {...register('lng', {
+                  required: 'La longitud es requerida',
+                  valueAsNumber: true,
+                })}
+              />
+            </div>
 
-                   {/* Mapa interactivo */}
-                   <div>
-                     <div className="flex items-center justify-between mb-2">
-                       <label className="block text-sm font-medium text-gray-700">
-                         Seleccionar ubicación en el mapa
-                       </label>
-                       <Button
-                         type="button"
-                         variant="outline"
-                         size="sm"
-                         onClick={getCurrentLocation}
-                         className="text-xs"
-                       >
-                         📍 Centrar aquí
-                       </Button>
-                     </div>
-                     <div className="relative">
-                       {isGettingLocation && (
-                         <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-lg">
-                           <div className="text-center">
-                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto"></div>
-                             <p className="text-sm text-gray-600 mt-2">Obteniendo tu ubicación...</p>
-                           </div>
-                         </div>
-                       )}
-                       <MapComponent
-                         center={mapCenter}
-                         onLocationSelect={handleMapLocationSelect}
-                         selectedLocation={watch('lat') && watch('lng') ? [watch('lat'), watch('lng')] : null}
-                         height="400px"
-                         className="border border-gray-300 rounded-lg"
-                         zoom={15}
-                       />
-                     </div>
-                     <p className="text-xs text-gray-500 mt-1">
-                       Haz clic en el mapa para seleccionar una ubicación. El marcador azul mostrará tu selección.
-                     </p>
-                   </div>
-                 </div>
+            {/* Mapa interactivo */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Seleccionar ubicación en el mapa
+                </label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={getCurrentLocation}
+                  className="text-xs"
+                >
+                  📍 Centrar aquí
+                </Button>
+              </div>
+              <div className="relative">
+                {isGettingLocation && (
+                  <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10 rounded-lg">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto"></div>
+                      <p className="text-sm text-gray-600 mt-2">Obteniendo tu ubicación...</p>
+                    </div>
+                  </div>
+                )}
+                <MapComponent
+                  center={mapCenter}
+                  onLocationSelect={handleMapLocationSelect}
+                  selectedLocation={watch('lat') && watch('lng') ? [watch('lat'), watch('lng')] : null}
+                  height="300px"
+                  className="border border-gray-300 rounded-lg"
+                  zoom={15}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Haz clic en el mapa para seleccionar una ubicación.
+              </p>
+            </div>
+          </div>
 
           <Input
             label="URL de Google Maps (opcional)"
@@ -445,35 +435,12 @@ export const Addresses = () => {
             {...register('url')}
           />
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-blue-700">
-                  Puedes usar{' '}
-                  <button
-                    type="button"
-                    onClick={getCurrentLocation}
-                    className="font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    mi ubicación actual
-                  </button>{' '}
-                  para obtener las coordenadas automáticamente.
-                </p>
-              </div>
-            </div>
-          </div>
-
           <div className="flex space-x-3">
             <Button
               type="button"
               variant="outline"
               onClick={() => {
-                setIsModalOpen(false)
+                setIsAddModalOpen(false)
                 setEditingDirection(null)
                 reset()
               }}
@@ -483,7 +450,7 @@ export const Addresses = () => {
             </Button>
             <Button
               type="submit"
-              className="flex-1"
+              className="flex-1 bg-orange-600 hover:bg-orange-700"
               isLoading={createDirectionMutation.isPending || updateDirectionMutation.isPending}
               disabled={createDirectionMutation.isPending || updateDirectionMutation.isPending}
             >
@@ -525,8 +492,6 @@ export const Addresses = () => {
           </div>
         </div>
       </Modal>
-    </div>
+    </>
   )
 }
-
-

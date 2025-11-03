@@ -1,0 +1,1103 @@
+# 🚀 API Completa - Santiago Users MS
+
+## 📋 Información General
+
+**Microservicio:** Santiago Users MS  
+**Versión:** 1.0.0  
+**URL Base:** `http://localhost:3002/santiago-users`  
+**Swagger UI:** `http://localhost:3002/swagger-ui.html`  
+**Puerto:** 3002  
+**Base de Datos:** MongoDB  
+
+---
+
+## 🔗 Índice de Endpoints
+
+### 👥 **Gestión de Usuarios Online**
+- [POST /add-user](#1-post-add-user) - Crear nuevo usuario
+- [PUT /edit-user](#2-put-edit-user) - Editar usuario
+- [POST /login](#3-post-login) - Login de usuario
+- [PUT /logout/{id}](#4-put-logoutid) - Logout de usuario
+- [GET /user-data](#5-get-user-data) - Obtener datos de usuario
+- [PUT /user-status/{id}](#6-put-user-statusid) - Cambiar estatus de usuario
+- [DELETE /delete-user/{id}](#7-delete-delete-userid) - Eliminar usuario
+- [GET /get-all-users](#8-get-get-all-users) - Listar usuarios (paginado)
+
+### 👤 **Gestión de Usuarios Offline**
+- [POST /user-offline-new](#9-post-user-offline-new) - Crear usuario offline
+- [PUT /user-offline-update](#10-put-user-offline-update) - Actualizar usuario offline
+- [GET /user-get-name](#11-get-user-get-name) - Buscar usuario por nombre
+- [GET /user-get-nit](#12-get-user-get-nit) - Buscar usuario por NIT
+- [GET /user-get-number](#13-get-user-get-number) - Buscar usuario por número
+- [GET /user-get-cellphone](#14-get-user-get-cellphone) - Buscar usuario por celular
+- [GET /get-all-users-offline](#15-get-get-all-users-offline) - Listar usuarios offline (paginado)
+
+### 📍 **Gestión de Direcciones**
+- [POST /add-new-direction](#16-post-add-new-direction) - Crear dirección
+- [PUT /edit-direction](#17-put-edit-direction) - Editar dirección
+- [DELETE /delete-direction](#18-delete-delete-direction) - Eliminar dirección
+- [GET /user-directions](#19-get-user-directions) - Obtener direcciones de usuario
+
+### 🧾 **Gestión de Facturación**
+- [POST /add-factura](#20-post-add-factura) - Crear facturación
+- [PUT /edit-factura](#21-put-edit-factura) - Editar facturación
+- [DELETE /delete-factura](#22-delete-delete-factura) - Eliminar facturación
+- [GET /facturaciones-user](#23-get-facturaciones-user) - Obtener facturaciones de usuario
+
+### 🔐 **Autenticación Social**
+- [POST /google-login](#24-post-google-login) - Login con Google
+- [POST /google-operation](#25-post-google-operation) - Operación con Google
+- [POST /facebook-login](#26-post-facebook-login) - Login con Facebook
+- [POST /facebook-operation](#27-post-facebook-operation) - Operación con Facebook
+
+### ⚙️ **Funcionalidades Adicionales**
+- [POST /add-expo-token](#28-post-add-expo-token) - Agregar token Expo
+- [POST /img](#29-post-img) - Subir imagen
+- [PUT /user-last-location](#30-put-user-last-location) - Actualizar última ubicación
+
+---
+
+## 👥 Gestión de Usuarios Online
+
+### 1. POST /add-user
+
+**Descripción:** Crea un nuevo usuario en el sistema.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "names": "string",
+  "lastNames": "string",
+  "phoneNumber": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Parámetros:**
+- `names` (string, requerido): Nombres del usuario
+- `lastNames` (string, requerido): Apellidos del usuario
+- `phoneNumber` (string, requerido): Número de teléfono
+- `email` (string, requerido): Email del usuario
+- `password` (string, requerido): Contraseña del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Usuario creado exitosamente"
+}
+```
+
+**Respuestas de Error:**
+```json
+{
+  "codeError": "COD353",
+  "msgError": "Cuenta existente"
+}
+```
+
+---
+
+### 2. PUT /edit-user
+
+**Descripción:** Actualiza los datos de un usuario existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "id": "string",
+  "names": "string",
+  "lastNames": "string",
+  "phoneNumber": "string",
+  "email": "string"
+}
+```
+
+**Parámetros:**
+- `id` (string, requerido): ID del usuario a editar
+- `names` (string, opcional): Nuevos nombres
+- `lastNames` (string, opcional): Nuevos apellidos
+- `phoneNumber` (string, opcional): Nuevo número de teléfono
+- `email` (string, opcional): Nuevo email
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Usuario actualizado exitosamente"
+}
+```
+
+---
+
+### 3. POST /login
+
+**Descripción:** Autentica un usuario en el sistema.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "id": "string",
+  "password": "string"
+}
+```
+
+**Parámetros:**
+- `id` (string, requerido): Email o ID del usuario
+- `password` (string, requerido): Contraseña del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Login exitoso"
+}
+```
+
+**Respuesta de Error:**
+```json
+{
+  "codeError": "COD500",
+  "msgError": "Credenciales no válidas"
+}
+```
+
+---
+
+### 4. PUT /logout/{id}
+
+**Descripción:** Cierra la sesión de un usuario.
+
+**Parámetros de Path:**
+- `id` (string): ID del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Logout exitoso"
+}
+```
+
+---
+
+### 5. GET /user-data
+
+**Descripción:** Obtiene los datos completos de un usuario.
+
+**Parámetros de Query:**
+- `userid` (string): ID del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "names": "string",
+  "lastNames": "string",
+  "phoneNumber": "string",
+  "email": "string",
+  "id": "string",
+  "lastLocation": "object",
+  "status": "boolean",
+  "img": "string",
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Datos obtenidos exitosamente"
+  }
+}
+```
+
+---
+
+### 6. PUT /user-status/{id}
+
+**Descripción:** Cambia el estatus de un usuario (activo/inactivo).
+
+**Parámetros de Path:**
+- `id` (string): ID del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Estatus actualizado"
+}
+```
+
+---
+
+### 7. DELETE /delete-user/{id}
+
+**Descripción:** Elimina un usuario del sistema.
+
+**Parámetros de Path:**
+- `id` (string): ID del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Usuario eliminado"
+}
+```
+
+---
+
+### 8. GET /get-all-users
+
+**Descripción:** Obtiene una lista paginada de todos los usuarios.
+
+**Parámetros de Query:**
+- `size` (int): Tamaño de la página
+- `pageNo` (int): Número de página
+
+**Respuesta Exitosa:**
+```json
+{
+  "users": [
+    {
+      "id": "string",
+      "names": "string",
+      "lastNames": "string",
+      "phoneNumber": "string",
+      "email": "string",
+      "status": "boolean"
+    }
+  ],
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Datos encontrados"
+  }
+}
+```
+
+---
+
+## 👤 Gestión de Usuarios Offline
+
+### 9. POST /user-offline-new
+
+**Descripción:** Crea un nuevo usuario offline.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "nombre": "string",
+  "contacto": "string",
+  "celular": "string",
+  "nit": "string",
+  "ubicacion": "string",
+  "url": "string",
+  "alias": "string",
+  "detallesPedido": "string",
+  "metodoPago": "string"
+}
+```
+
+**Parámetros:**
+- `nombre` (string, requerido): Nombre del usuario
+- `contacto` (string, requerido): Información de contacto
+- `celular` (string, requerido): Número de celular
+- `nit` (string, requerido): NIT del usuario
+- `ubicacion` (string, requerido): Ubicación del usuario
+- `url` (string, opcional): URL de ubicación
+- `alias` (string, opcional): Alias de la ubicación
+- `detallesPedido` (string, opcional): Detalles del pedido
+- `metodoPago` (string, opcional): Método de pago preferido
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Usuario offline creado exitosamente"
+}
+```
+
+---
+
+### 10. PUT /user-offline-update
+
+**Descripción:** Actualiza los datos de un usuario offline.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "id": "string",
+  "nombre": "string",
+  "contacto": "string",
+  "celular": "string",
+  "nit": "string",
+  "ubicacion": "string",
+  "url": "string",
+  "alias": "string",
+  "detallesPedido": "string",
+  "metodoPago": "string"
+}
+```
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Usuario offline actualizado exitosamente"
+}
+```
+
+---
+
+### 11. GET /user-get-name
+
+**Descripción:** Busca un usuario offline por nombre.
+
+**Parámetros de Query:**
+- `name` (string): Nombre del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "userData": {
+    "id": "string",
+    "nombre": "string",
+    "contacto": "string",
+    "celular": "string",
+    "nit": "string",
+    "ubicacion": "string"
+  },
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Usuario encontrado"
+  }
+}
+```
+
+---
+
+### 12. GET /user-get-nit
+
+**Descripción:** Busca un usuario offline por NIT.
+
+**Parámetros de Query:**
+- `nit` (string): NIT del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "userData": {
+    "id": "string",
+    "nombre": "string",
+    "contacto": "string",
+    "celular": "string",
+    "nit": "string",
+    "ubicacion": "string"
+  },
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Usuario encontrado"
+  }
+}
+```
+
+---
+
+### 13. GET /user-get-number
+
+**Descripción:** Busca un usuario offline por número.
+
+**Parámetros de Query:**
+- `number` (string): Número del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "userData": {
+    "id": "string",
+    "nombre": "string",
+    "contacto": "string",
+    "celular": "string",
+    "nit": "string",
+    "ubicacion": "string"
+  },
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Usuario encontrado"
+  }
+}
+```
+
+---
+
+### 14. GET /user-get-cellphone
+
+**Descripción:** Busca un usuario offline por celular.
+
+**Parámetros de Query:**
+- `cellphone` (string): Celular del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "userData": {
+    "id": "string",
+    "nombre": "string",
+    "contacto": "string",
+    "celular": "string",
+    "nit": "string",
+    "ubicacion": "string"
+  },
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Usuario encontrado"
+  }
+}
+```
+
+---
+
+### 15. GET /get-all-users-offline
+
+**Descripción:** Obtiene una lista paginada de usuarios offline.
+
+**Parámetros de Query:**
+- `size` (int): Tamaño de la página
+- `pageNo` (int): Número de página
+
+**Respuesta Exitosa:**
+```json
+{
+  "users": [
+    {
+      "id": "string",
+      "nombre": "string",
+      "contacto": "string",
+      "celular": "string",
+      "nit": "string",
+      "ubicacion": "string"
+    }
+  ],
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Datos encontrados"
+  }
+}
+```
+
+---
+
+## 📍 Gestión de Direcciones
+
+### 16. POST /add-new-direction
+
+**Descripción:** Crea una nueva dirección para un usuario.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "location": "string",
+  "lat": "number",
+  "lng": "number",
+  "alias": "string",
+  "url": "string",
+  "userId": "string"
+}
+```
+
+**Parámetros:**
+- `location` (string, requerido): Dirección textual
+- `lat` (number, requerido): Latitud
+- `lng` (number, requerido): Longitud
+- `alias` (string, requerido): Alias de la dirección
+- `url` (string, opcional): URL de Google Maps
+- `userId` (string, requerido): ID del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Dirección creada exitosamente"
+}
+```
+
+---
+
+### 17. PUT /edit-direction
+
+**Descripción:** Actualiza una dirección existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "locationID": "string",
+  "location": "string",
+  "lat": "number",
+  "lng": "number",
+  "alias": "string",
+  "url": "string"
+}
+```
+
+**Parámetros:**
+- `locationID` (string, requerido): ID de la dirección a editar
+- `location` (string, opcional): Nueva dirección
+- `lat` (number, opcional): Nueva latitud
+- `lng` (number, opcional): Nueva longitud
+- `alias` (string, opcional): Nuevo alias
+- `url` (string, opcional): Nueva URL
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Dirección actualizada exitosamente"
+}
+```
+
+---
+
+### 18. DELETE /delete-direction
+
+**Descripción:** Elimina una dirección.
+
+**Parámetros de Query:**
+- `id` (string): ID de la dirección
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Dirección eliminada exitosamente"
+}
+```
+
+---
+
+### 19. GET /user-directions
+
+**Descripción:** Obtiene todas las direcciones de un usuario.
+
+**Parámetros de Query:**
+- `userid` (string): ID del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "locationData": [
+    {
+      "id": "string",
+      "alias": "string",
+      "direction": "string",
+      "lat": "number",
+      "lng": "number"
+    }
+  ],
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Datos encontrados"
+  }
+}
+```
+
+---
+
+## 🧾 Gestión de Facturación
+
+### 20. POST /add-factura
+
+**Descripción:** Crea una nueva facturación para un usuario.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "userID": "string",
+  "razonSocial": "string",
+  "nit": "string"
+}
+```
+
+**Parámetros:**
+- `userID` (string, requerido): ID o email del usuario
+- `razonSocial` (string, requerido): Razón social de la empresa
+- `nit` (string, requerido): Número de identificación tributaria
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Datos almacenados correctamente"
+}
+```
+
+**Respuestas de Error:**
+```json
+{
+  "codeError": "COD525",
+  "msgError": "Usuario no valido"
+}
+```
+
+```json
+{
+  "codeError": "COD526",
+  "msgError": "Nit no válido"
+}
+```
+
+---
+
+### 21. PUT /edit-factura
+
+**Descripción:** Actualiza los datos de facturación.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "id": "string",
+  "razonSocial": "string",
+  "nit": "string"
+}
+```
+
+**Parámetros:**
+- `id` (string, requerido): ID de la facturación a editar
+- `razonSocial` (string, opcional): Nueva razón social
+- `nit` (string, opcional): Nuevo NIT
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Datos almacenados correctamente"
+}
+```
+
+---
+
+### 22. DELETE /delete-factura
+
+**Descripción:** Elimina una facturación.
+
+**Parámetros de Query:**
+- `id` (string): ID de la facturación
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Datos facturacion eliminados correctamente"
+}
+```
+
+---
+
+### 23. GET /facturaciones-user
+
+**Descripción:** Obtiene todas las facturaciones de un usuario.
+
+**Parámetros de Query:**
+- `userid` (string): ID o email del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "facturaciones": [
+    {
+      "id": "string",
+      "userID": "string",
+      "razonSocial": "string",
+      "nit": "string"
+    }
+  ],
+  "generic": {
+    "codeError": "COD200",
+    "msgError": "Datos encontrados"
+  }
+}
+```
+
+**Respuesta Sin Datos:**
+```json
+{
+  "facturaciones": null,
+  "generic": {
+    "codeError": "COD565",
+    "msgError": "No se encontraron datos"
+  }
+}
+```
+
+---
+
+## 🔐 Autenticación Social
+
+### 24. POST /google-login
+
+**Descripción:** Valida un token de Google (solo validación).
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "token": "string"
+}
+```
+
+**Parámetros:**
+- `token` (string, requerido): Token de Google
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "usuario@gmail.com"
+}
+```
+
+**Respuesta de Error:**
+```json
+{
+  "codeError": "COD500",
+  "msgError": "Credenciales de google no validas"
+}
+```
+
+---
+
+### 25. POST /google-operation
+
+**Descripción:** Crea usuario si no existe con token de Google.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "token": "string"
+}
+```
+
+**Parámetros:**
+- `token` (string, requerido): Token de Google
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Usuario creado exitosamente"
+}
+```
+
+**Respuesta Usuario Existente:**
+```json
+{
+  "codeError": "COD353",
+  "msgError": "Cuenta existente"
+}
+```
+
+---
+
+### 26. POST /facebook-login
+
+**Descripción:** Valida un token de Facebook (solo validación).
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "token": "string"
+}
+```
+
+**Parámetros:**
+- `token` (string, requerido): Token de Facebook
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "usuario@facebook.com"
+}
+```
+
+---
+
+### 27. POST /facebook-operation
+
+**Descripción:** Crea usuario si no existe con token de Facebook.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "token": "string"
+}
+```
+
+**Parámetros:**
+- `token` (string, requerido): Token de Facebook
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Usuario creado exitosamente"
+}
+```
+
+---
+
+## ⚙️ Funcionalidades Adicionales
+
+### 28. POST /add-expo-token
+
+**Descripción:** Agrega un token de Expo para notificaciones push.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "userID": "string",
+  "token": "string"
+}
+```
+
+**Parámetros:**
+- `userID` (string, requerido): ID del usuario
+- `token` (string, requerido): Token de Expo
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Token agregado exitosamente"
+}
+```
+
+---
+
+### 29. POST /img
+
+**Descripción:** Sube una imagen para un usuario.
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+```
+
+**Request Body:**
+- `id` (string): ID del usuario
+- `img` (file): Archivo de imagen
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Imagen subida exitosamente"
+}
+```
+
+---
+
+### 30. PUT /user-last-location
+
+**Descripción:** Actualiza la última ubicación conocida del usuario.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "userID": "string",
+  "lat": "number",
+  "lng": "number"
+}
+```
+
+**Parámetros:**
+- `userID` (string, requerido): ID del usuario
+- `lat` (number, requerido): Latitud
+- `lng` (number, requerido): Longitud
+
+**Respuesta Exitosa:**
+```json
+{
+  "codeError": "COD200",
+  "msgError": "Ubicación actualizada exitosamente"
+}
+```
+
+---
+
+## 📊 Códigos de Error
+
+| Código | Descripción |
+|--------|-------------|
+| COD200 | Operación exitosa |
+| COD325 | Datos incorrectos |
+| COD353 | Cuenta existente |
+| COD404 | No encontrado |
+| COD500 | Error interno del servidor |
+| COD525 | Usuario/ID no válido |
+| COD526 | NIT no válido (ya existe) |
+| COD565 | No se encontraron datos |
+
+---
+
+## 🔧 Información Técnica
+
+### **Stack Tecnológico**
+- **Framework:** Spring Boot
+- **Base de Datos:** MongoDB
+- **Lenguaje:** Java 17+
+- **ORM:** Spring Data MongoDB
+- **Documentación:** Swagger/OpenAPI
+- **Build Tool:** Maven
+
+### **Arquitectura**
+- **Patrón:** Microservicio
+- **API:** REST
+- **Validación:** Jakarta Validation
+- **Respuestas:** GenericBean estandarizado
+
+### **Configuración**
+- **Puerto:** 3002
+- **Context Path:** /santiago-users
+- **Swagger UI:** /swagger-ui.html
+- **Base de Datos:** MongoDB (puerto por defecto)
+
+---
+
+## 🚀 Ejemplos de Uso
+
+### **Crear un usuario:**
+```bash
+curl -X POST http://localhost:3002/santiago-users/add-user \
+  -H "Content-Type: application/json" \
+  -d '{
+    "names": "Juan",
+    "lastNames": "Pérez",
+    "phoneNumber": "123456789",
+    "email": "juan@example.com",
+    "password": "password123"
+  }'
+```
+
+### **Login de usuario:**
+```bash
+curl -X POST http://localhost:3002/santiago-users/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "juan@example.com",
+    "password": "password123"
+  }'
+```
+
+### **Crear una dirección:**
+```bash
+curl -X POST http://localhost:3002/santiago-users/add-new-direction \
+  -H "Content-Type: application/json" \
+  -d '{
+    "location": "Calle 123, Zona Centro",
+    "lat": -17.389782,
+    "lng": -66.1428,
+    "alias": "Casa",
+    "userId": "USER_ID_AQUI"
+  }'
+```
+
+### **Crear facturación:**
+```bash
+curl -X POST http://localhost:3002/santiago-users/add-factura \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userID": "juan@example.com",
+    "razonSocial": "Empresa ABC S.A.S",
+    "nit": "900123456-7"
+  }'
+```
+
+---
+
+## 📝 Notas Importantes
+
+1. **Validación:** Todos los endpoints validan la existencia de usuarios antes de operar
+2. **Paginación:** Los endpoints de listado soportan paginación con parámetros `size` y `pageNo`
+3. **Tokens:** Los endpoints de autenticación social requieren tokens válidos
+4. **Imágenes:** El endpoint de subir imagen acepta archivos multipart/form-data
+5. **Facturación:** Acepta tanto usuarios online como offline
+6. **Direcciones:** Incluyen coordenadas GPS para geolocalización
+7. **Respuestas:** Todas siguen el patrón `GenericBean` para consistencia
+
+---
+
+## 🔗 Enlaces Útiles
+
+- **Swagger UI:** http://localhost:3002/swagger-ui.html
+- **API Base:** http://localhost:3002/santiago-users
+- **Documentación JSON:** http://localhost:3002/v3/api-docs

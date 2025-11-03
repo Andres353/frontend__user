@@ -8,7 +8,7 @@ export default {
     extend: {
       colors: {
         primary: {
-          green: '#22c55e',
+          orange: '#f97316',
           blue: '#3b82f6',
         },
         secondary: {
@@ -21,7 +21,7 @@ export default {
           secondary: '#6b7280',
         },
         border: '#e5e7eb',
-        success: '#10b981',
+        success: '#f97316',
         warning: '#f59e0b',
         error: '#ef4444',
       },

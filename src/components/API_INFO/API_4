@@ -1,0 +1,1547 @@
+# 🚀 API Completa - Santiago Products MS
+
+## 📋 Información General
+
+**Microservicio:** Santiago Products MS  
+**Versión:** 1.0.0  
+**URL Base:** `http://localhost:4010`  
+**Swagger UI:** http://localhost:4010/api-docs  
+**Puerto:** 4010  
+**Base de Datos:** MongoDB  
+
+---
+
+## 🔗 Índice de Endpoints
+
+### 📦 **Gestión de Variables de Producto**
+- [GET /santiago-pv/get-pv](#1-get-get-pv) - Obtener variable de producto única
+- [GET /santiago-pv/get-pv-product](#2-get-get-pv-product) - Obtener variables de producto
+- [POST /santiago-pv/add-pv](#3-post-add-pv) - Crear variable de producto
+- [PUT /santiago-pv/edit-pv](#4-put-edit-pv) - Editar variable de producto
+- [PUT /santiago-pv/delete-pv/{id}](#5-put-delete-pv) - Eliminar variable de producto
+
+### 🍕 **Gestión de Productos**
+- [GET /santiago-prod/get-product](#6-get-get-product) - Obtener producto
+- [GET /santiago-prod/get-product-rejected](#7-get-get-product-rejected) - Obtener productos rechazados
+- [GET /santiago-prod/get-product-not-accepted](#8-get-get-product-not-accepted) - Obtener productos no aceptados
+- [POST /santiago-prod/add-product](#9-post-add-product) - Crear producto
+- [POST /santiago-prod/fav-op](#10-post-fav-op) - Agregar producto favorito
+- [PUT /santiago-prod/edit-product](#11-put-edit-product) - Editar producto
+- [PUT /santiago-prod/product-status/{id}](#12-put-product-status) - Cambiar estatus producto
+- [PUT /santiago-prod/product-status-rejected](#13-put-product-status-rejected) - Cambiar estatus de rechazado
+- [PUT /santiago-prod/product-status-admin/{id}](#14-put-product-status-admin) - Cambiar estatus admin
+- [DELETE /santiago-prod/product-delete/{id}](#15-delete-product-delete) - Eliminar producto
+
+### 💰 **Gestión de Pricing**
+- [GET /santiago-pricing/get-pv](#16-get-get-pricing) - Obtener precios de variable única
+- [GET /santiago-pricing/get-pv-product](#17-get-get-pricing-product) - Obtener precios por producto
+- [POST /santiago-pricing/add-pricing](#18-post-add-pricing) - Crear precios
+- [POST /santiago-pricing/add-pricing-many](#19-post-add-pricing-many) - Crear múltiples precios
+- [PUT /santiago-pricing/edit-pricing](#20-put-edit-pricing) - Editar precios
+- [PUT /santiago-pricing/delete-pricing/{id}](#21-put-delete-pricing) - Eliminar precios
+
+### 📍 **Gestión de Posicionamiento**
+- [GET /santiago-positioning/get-positioning](#22-get-get-positioning) - Obtener posicionamiento
+- [GET /santiago-positioning/get-positioning-positioning](#23-get-get-positioning-by-location) - Obtener posicionamiento por ubicación
+- [GET /santiago-positioning/get-positioning-free](#24-get-get-positioning-free) - Obtener posiciones libres
+- [POST /santiago-positioning/emp-positioning](#25-post-emp-positioning) - Agregar posicionamiento
+- [POST /santiago-positioning/img-positioning](#26-post-img-positioning) - Manejar posicionamiento de imágenes
+- [PUT /santiago-positioning/emp-positioning](#27-put-emp-positioning) - Editar posicionamiento
+- [PUT /santiago-positioning/edit-img-positioning](#28-put-edit-img-positioning) - Editar imagen de posicionamiento
+- [DELETE /santiago-positioning/emp-delete-positioning/{id}](#29-delete-emp-delete-positioning) - Eliminar posicionamiento
+
+### 🍽️ **Gestión de Menú**
+- [GET /santiago-menu/get-menu](#30-get-get-menu) - Obtener menú
+- [POST /santiago-menu/add-menu](#31-post-add-menu) - Agregar categoría al menú
+- [PUT /santiago-menu/edit-menu](#32-put-edit-menu) - Editar menú
+
+### ⏰ **Gestión de Horarios**
+- [GET /santiago-companies/schedule/branch/{branchId}](#33-get-schedule-branch) - Obtener horarios de sucursal
+- [GET /santiago-companies/schedule/branch-status/{branchId}](#34-get-schedule-branch-status) - Obtener estado de sucursal
+- [POST /santiago-companies/schedule/create](#35-post-schedule-create) - Crear horario
+- [POST /santiago-companies/schedule/temporary-closure](#36-post-schedule-temporary-closure) - Cerrar temporalmente
+- [PUT /santiago-companies/schedule/update/{scheduleId}](#37-put-schedule-update) - Actualizar horario
+- [PUT /santiago-companies/schedule/status/{branchId}](#38-put-schedule-status) - Cambiar estado abierto/cerrado
+- [PUT /santiago-companies/schedule/reopen/{branchId}](#39-put-schedule-reopen) - Reabrir sucursal
+- [DELETE /santiago-companies/schedule/delete/{scheduleId}](#40-delete-schedule-delete) - Eliminar horario
+- [DELETE /santiago-companies/schedule/delete-by-day](#41-delete-schedule-delete-by-day) - Eliminar horario por día
+
+### 🏢 **Gestión de Empresas**
+- [GET /santiago-companies/get-data-search](#42-get-get-data-search) - Obtener info sucursal
+- [GET /santiago-companies/get-data-search-regex](#43-get-get-data-search-regex) - Obtener info con búsqueda
+- [GET /santiago-companies/get-companies](#44-get-get-companies) - Obtener todas las empresas
+- [GET /santiago-companies/get-companies-regex](#45-get-get-companies-regex) - Obtener empresas en buscador
+- [GET /santiago-companies/get-companies-id](#46-get-get-companies-id) - Obtener empresa por ID
+- [GET /santiago-companies/get-companies-category](#47-get-get-companies-category) - Obtener empresas por categoría
+- [GET /santiago-companies/get-companies-app](#48-get-get-companies-app) - Obtener empresas de app
+- [GET /santiago-companies/get-branches](#49-get-get-branches) - Obtener sucursales
+- [GET /santiago-companies/get-branches-nearest](#50-get-get-branches-nearest) - Obtener sucursal más cercana
+- [GET /santiago-companies/get-branches-app](#51-get-get-branches-app) - Obtener sucursales de app
+- [GET /santiago-companies/get-branch-data](#52-get-get-branch-data) - Obtener info sucursal
+- [POST /santiago-companies/new-company](#53-post-new-company) - Crear empresa
+- [POST /santiago-companies/login-companies](#54-post-login-companies) - Login empresas
+- [POST /santiago-companies/token-expo](#55-post-token-expo) - Agregar token expo
+- [POST /santiago-companies/fav-op](#56-post-fav-op) - Agregar empresa favorita
+- [POST /santiago-companies/add-starts](#57-post-add-starts) - Agregar puntuaciones
+- [POST /santiago-companies/add-branch](#58-post-add-branch) - Crear sucursal
+- [PUT /santiago-companies/logout/{id}](#59-put-logout) - Logout
+- [PUT /santiago-companies/edit-company](#60-put-edit-company) - Editar empresa
+- [PUT /santiago-companies/edit-branch](#61-put-edit-branch) - Editar sucursal
+- [PUT /santiago-companies/edit-branch-status/{id}](#62-put-edit-branch-status) - Editar estatus sucursal
+- [PUT /santiago-companies/company-favorite-op/{id}](#63-put-company-favorite-op) - Agregar/quitar favoritas
+- [DELETE /santiago-companies/delete-company](#64-delete-delete-company) - Eliminar empresa
+- [DELETE /santiago-companies/delete-branch](#65-delete-delete-branch) - Eliminar sucursal
+
+### 🗂️ **Gestión de Categorías de Producto**
+- [GET /santiago-catprod/get-category-products](#66-get-get-category-products) - Obtener categorías productos
+- [GET /santiago-catprod/get-category-products-data](#67-get-get-category-products-data) - Obtener datos categorías
+- [POST /santiago-catprod/add-category-products](#68-post-add-category-products) - Crear categoría productos
+- [POST /santiago-catprod/add-promo-extra/{id}](#69-post-add-promo-extra) - Crear promo y extra
+- [PUT /santiago-catprod/edit-category-products](#70-put-edit-category-products) - Editar categoría productos
+- [DELETE /santiago-catprod/status-category-products/{id}](#71-delete-status-category-products) - Cambiar estatus
+- [DELETE /santiago-catprod/delete-category-products/{id}](#72-delete-delete-category-products) - Eliminar categoría
+
+### 📂 **Gestión de Categorías**
+- [GET /santiago-categories/get-category](#73-get-get-category) - Obtener categorías
+- [POST /santiago-categories/add-category](#74-post-add-category) - Crear categoría
+- [PUT /santiago-categories/edit-category](#75-put-edit-category) - Editar categoría
+- [PUT /santiago-categories/delete-category](#76-put-delete-category) - Eliminar categoría
+
+### 📱 **Gestión de Apps**
+- [GET /santiago-app/get-data-id](#77-get-get-data-id) - Obtener categoría por ID
+- [GET /santiago-app/get-data-app](#78-get-get-data-app) - Obtener todas las apps
+- [GET /santiago-app/get-data-all](#79-get-get-data-all) - Obtener toda la info
+- [POST /santiago-app/new-app](#80-post-new-app) - Crear app
+- [POST /santiago-app/add-branch-app](#81-post-add-branch-app) - Agregar sucursal a app
+- [PUT /santiago-app/edit-app](#82-put-edit-app) - Editar app
+- [PUT /santiago-app/change-status-app](#83-put-change-status-app) - Cambiar estatus app
+- [DELETE /santiago-app/quit-branch-app](#84-delete-quit-branch-app) - Quitar sucursal de app
+- [DELETE /santiago-app/quit-app/{id}](#85-delete-quit-app) - Eliminar app
+
+### 🔍 **Búsqueda**
+- [GET /santiago-search/suggestions](#86-get-suggestions) - Obtener sugerencias
+- [GET /santiago-search/preloaded-suggestions](#87-get-preloaded-suggestions) - Obtener sugerencias pre-cargadas
+
+### 🏬 **Gestión de Sucursales (Branch)**
+- [GET /santiago-branches/get-branches](#88-get-get-branches) - Obtener sucursales
+- [GET /santiago-branches/get-branches-search](#89-get-get-branches-search) - Obtener sucursales con búsqueda
+
+---
+
+## 📦 Variables de Producto
+
+### 1. GET /santiago-pv/get-pv
+
+**Descripción:** Obtiene una variable de producto única por su ID.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID de la variable del producto
+
+**Respuesta Exitosa:**
+```json
+{
+  "pv": [
+    {
+      "id": "string",
+      "name": "string",
+      "canMany": true,
+      "required": true,
+      "instructions": "string",
+      "productsId": "string",
+      "quantity": 0
+    }
+  ],
+  "generic": {
+    "codeError": "string",
+    "msgError": "string"
+  }
+}
+```
+
+---
+
+### 2. GET /santiago-pv/get-pv-product
+
+**Descripción:** Obtiene todas las variables de un producto específico.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID del producto
+
+**Respuesta:** Misma estructura que `/get-pv`
+
+---
+
+### 3. POST /santiago-pv/add-pv
+
+**Descripción:** Crea una nueva variable de producto.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "canMany": true,
+  "required": true,
+  "instructions": "string",
+  "productsId": "string",
+  "quantity": 0
+}
+```
+
+---
+
+### 4. PUT /santiago-pv/edit-pv
+
+**Descripción:** Edita una variable de producto existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 5. PUT /santiago-pv/delete-pv/{id}
+
+**Descripción:** Elimina una variable de producto por su ID.
+
+**Parámetros de Path:**
+- `id` (string): ID de la variable del producto
+
+---
+
+## 🍕 Productos
+
+### 6. GET /santiago-prod/get-product
+
+**Descripción:** Obtiene información de un producto.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID del producto
+
+---
+
+### 7. GET /santiago-prod/get-product-rejected
+
+**Descripción:** Obtiene todos los productos rechazados por el administrador.
+
+---
+
+### 8. GET /santiago-prod/get-product-not-accepted
+
+**Descripción:** Obtiene todos los productos que no han sido aceptados.
+
+---
+
+### 9. POST /santiago-prod/add-product
+
+**Descripción:** Crea un nuevo producto.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 10. POST /santiago-prod/fav-op
+
+**Descripción:** Agrega o quita un producto de favoritos.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 11. PUT /santiago-prod/edit-product
+
+**Descripción:** Edita la información de un producto existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 12. PUT /santiago-prod/product-status/{id}
+
+**Descripción:** Cambia el estatus de un producto.
+
+**Parámetros de Path:**
+- `id` (string): ID del producto
+
+---
+
+### 13. PUT /santiago-prod/product-status-rejected
+
+**Descripción:** Cambia el estatus de rechazado de un producto.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 14. PUT /santiago-prod/product-status-admin/{id}
+
+**Descripción:** Cambia el estatus admin de un producto.
+
+**Parámetros de Path:**
+- `id` (string): ID del producto
+
+---
+
+### 15. DELETE /santiago-prod/product-delete/{id}
+
+**Descripción:** Elimina un producto permanentemente.
+
+**Parámetros de Path:**
+- `id` (string): ID del producto
+
+---
+
+## 💰 Pricing
+
+### 16. GET /santiago-pricing/get-pv
+
+**Descripción:** Obtiene los precios de una variable de producto específica.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID del pricing de la variable del producto
+
+**Respuesta Exitosa:**
+```json
+{
+  "pricingData": [
+    {
+      "id": "string",
+      "name": "string",
+      "price": 0,
+      "pv": "string"
+    }
+  ],
+  "generic": {
+    "codeError": "string",
+    "msgError": "string"
+  }
+}
+```
+
+---
+
+### 17. GET /santiago-pricing/get-pv-product
+
+**Descripción:** Obtiene todos los precios de variables de un producto por PV.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID del producto
+
+**Respuesta:** Misma estructura que `/get-pv`
+
+---
+
+### 18. POST /santiago-pricing/add-pricing
+
+**Descripción:** Crea nuevos precios para variables de productos.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 19. POST /santiago-pricing/add-pricing-many
+
+**Descripción:** Crea múltiples precios para variables de productos en una sola operación.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 20. PUT /santiago-pricing/edit-pricing
+
+**Descripción:** Edita precios de variables de productos existentes.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 21. PUT /santiago-pricing/delete-pricing/{id}
+
+**Descripción:** Elimina un precio de variable por su ID.
+
+**Parámetros de Path:**
+- `id` (string): ID del pricing
+
+---
+
+## 📍 Posicionamiento
+
+### 22. GET /santiago-positioning/get-positioning
+
+**Descripción:** Obtiene todos los posicionamientos activos.
+
+**Parámetros de Query:**
+- `type` (string, requerido): Tipo de posicionamiento
+
+**Respuesta Exitosa:**
+```json
+{
+  "positioning": [
+    {
+      "id": "string",
+      "companyCode": "string",
+      "branchCode": "string",
+      "img": "string",
+      "startDate": "string",
+      "endDate": "string",
+      "type": "string",
+      "url": "string",
+      "identifier": "string",
+      "payment": 0,
+      "position": 0,
+      "companyName": "string",
+      "branchName": "string",
+      "active": true
+    }
+  ],
+  "generic": {
+    "codeError": "string",
+    "msgError": "string"
+  }
+}
+```
+
+---
+
+### 23. GET /santiago-positioning/get-positioning-positioning
+
+**Descripción:** Obtiene posicionamientos basados en coordenadas geográficas.
+
+**Parámetros de Query:**
+- `lat` (number, requerido): Latitud
+- `lng` (number, requerido): Longitud
+
+**Respuesta:** Misma estructura que `/get-positioning`
+
+---
+
+### 24. GET /santiago-positioning/get-positioning-free
+
+**Descripción:** Obtiene posiciones libres disponibles.
+
+**Parámetros de Query:**
+- `type` (string, requerido): Tipo de posicionamiento
+
+**Respuesta Exitosa:**
+```json
+{
+  "additionalProp1": [0],
+  "additionalProp2": [0],
+  "additionalProp3": [0]
+}
+```
+
+---
+
+### 25. POST /santiago-positioning/emp-positioning
+
+**Descripción:** Agrega un nuevo posicionamiento de imágenes.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 26. POST /santiago-positioning/img-positioning
+
+**Descripción:** Maneja el posicionamiento de imágenes.
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+```
+
+---
+
+### 27. PUT /santiago-positioning/emp-positioning
+
+**Descripción:** Edita un posicionamiento existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 28. PUT /santiago-positioning/edit-img-positioning
+
+**Descripción:** Edita la imagen de un posicionamiento.
+
+**Headers:**
+```
+Content-Type: multipart/form-data
+```
+
+---
+
+### 29. DELETE /santiago-positioning/emp-delete-positioning/{id}
+
+**Descripción:** Elimina un posicionamiento por ID.
+
+**Parámetros de Path:**
+- `id` (string): ID del posicionamiento
+
+---
+
+## 🍽️ Menú
+
+### 30. GET /santiago-menu/get-menu
+
+**Descripción:** Obtiene el menú completo con categorías y productos.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID de la sucursal o empresa
+
+**Respuesta Exitosa:**
+```json
+{
+  "categoryData": [
+    {
+      "id": "string",
+      "categoryName": "string",
+      "imageURL": "string",
+      "products": [
+        {
+          "itemName": "string",
+          "itemPrice": 0,
+          "statusItem": true,
+          "visibleItem": true,
+          "itemCode": "string",
+          "imgUrl": "string",
+          "description": "string",
+          "status": 0,
+          "admiStatus": true,
+          "reason": "string",
+          "rejected": true,
+          "pv": [
+            {
+              "id": "string",
+              "name": "string",
+              "canMany": true,
+              "required": true,
+              "instructions": "string",
+              "quantity": 0,
+              "pricingBean": [
+                {
+                  "id": "string",
+                  "name": "string",
+                  "price": 0,
+                  "pv": "string"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "generic": {
+    "codeError": "string",
+    "msgError": "string"
+  }
+}
+```
+
+---
+
+### 31. POST /santiago-menu/add-menu
+
+**Descripción:** Agrega una nueva categoría al menú.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 32. PUT /santiago-menu/edit-menu
+
+**Descripción:** Edita una categoría del menú existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+## ⏰ Horarios
+
+### 33. GET /santiago-companies/schedule/branch/{branchId}
+
+**Descripción:** Obtiene todos los horarios de una sucursal.
+
+**Parámetros de Path:**
+- `branchId` (string, requerido): ID de la sucursal
+
+**Respuesta Exitosa:**
+```json
+{
+  "message": "string",
+  "code": "string",
+  "schedules": [
+    {
+      "id": "string",
+      "branchId": "string",
+      "dayOfWeek": "string",
+      "isOpen": true,
+      "timeSlots": [
+        {
+          "openTime": "string",
+          "closeTime": "string"
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+### 34. GET /santiago-companies/schedule/branch-status/{branchId}
+
+**Descripción:** Obtiene solo el estado de la sucursal (sin horarios detallados).
+
+**Parámetros de Path:**
+- `branchId` (string, requerido): ID de la sucursal
+
+---
+
+### 35. POST /santiago-companies/schedule/create
+
+**Descripción:** Crea un horario para una sucursal en un día específico.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "branchId": "string",
+  "dayOfWeek": "string",
+  "isOpen": true,
+  "timeSlots": [
+    {
+      "openTime": "string",
+      "closeTime": "string"
+    }
+  ]
+}
+```
+
+---
+
+### 36. POST /santiago-companies/schedule/temporary-closure
+
+**Descripción:** Cierra una sucursal temporalmente por X minutos.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 37. PUT /santiago-companies/schedule/update/{scheduleId}
+
+**Descripción:** Actualiza un horario existente.
+
+**Parámetros de Path:**
+- `scheduleId` (string): ID del horario
+
+---
+
+### 38. PUT /santiago-companies/schedule/status/{branchId}
+
+**Descripción:** Cambia el estado de abierto/cerrado de una sucursal.
+
+**Parámetros de Path:**
+- `branchId` (string): ID de la sucursal
+
+---
+
+### 39. PUT /santiago-companies/schedule/reopen/{branchId}
+
+**Descripción:** Reabre una sucursal (quita cierre temporal).
+
+**Parámetros de Path:**
+- `branchId` (string): ID de la sucursal
+
+---
+
+### 40. DELETE /santiago-companies/schedule/delete/{scheduleId}
+
+**Descripción:** Elimina un horario por ID.
+
+**Parámetros de Path:**
+- `scheduleId` (string): ID del horario
+
+---
+
+### 41. DELETE /santiago-companies/schedule/delete-by-day
+
+**Descripción:** Elimina horarios por sucursal y día específico.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+## 🏢 Empresas
+
+### 42. GET /santiago-companies/get-data-search
+
+**Descripción:** Obtiene información completa de sucursal con productos y categorías.
+
+**Parámetros de Query:**
+- `idUser` (string, requerido): ID del usuario
+
+**Respuesta Exitosa:**
+```json
+{
+  "categoriesData": [
+    {
+      "categoryName": "string",
+      "categoryCode": "string",
+      "waitingTime": "string",
+      "status": 0,
+      "url": "string",
+      "company": {
+        "id": "string",
+        "status": "string",
+        "name": "string",
+        "categoryCode": "string",
+        "categoryName": "string",
+        "creatioDate": "2025-10-28T21:29:33.210Z",
+        "email": "string",
+        "password": "string",
+        "companyPrice": "string",
+        "image": "string",
+        "imageP": "string",
+        "favorite": true,
+        "identifier": "string",
+        "identifierP": "string",
+        "commission": "string"
+      },
+      "branch": {
+        "id": "string",
+        "sectorName": "string",
+        "status": true,
+        "branCode": "string",
+        "wpp": "string",
+        "tel": "string",
+        "lat": 0,
+        "creationDate": "2025-10-28T21:29:33.210Z",
+        "companyID": "string",
+        "expoToken": "string",
+        "password": "string",
+        "deliveryTime": "string",
+        "pdf": "string",
+        "pdfIdentifier": "string",
+        "login": true,
+        "tiempoAceptacion": 0,
+        "tiempoPedidoListo": 0,
+        "tiempoLlegadaDeliveryTienda": 0,
+        "location": {
+          "x": 0,
+          "y": 0,
+          "type": "string",
+          "coordinates": [0]
+        },
+        "isCurrentlyOpen": true,
+        "temporaryClosureUntil": "2025-10-28T21:29:33.210Z",
+        "temporaryClosureReason": "string",
+        "long": 0
+      },
+      "products": [...],
+      "productsUser": [...]
+    }
+  ],
+  "companyData": {...}
+}
+```
+
+---
+
+### 43. GET /santiago-companies/get-data-search-regex
+
+**Descripción:** Obtiene información de sucursal con búsqueda por regex y filtros de precio.
+
+**Parámetros de Query:**
+- `idUser` (string, requerido): ID del usuario
+- `regex` (string, requerido): Patrón de búsqueda
+- `minPrice` (number, requerido): Precio mínimo
+- `maxPrice` (number, requerido): Precio máximo
+
+**Respuesta:** Misma estructura que `/get-data-search`
+
+---
+
+### 44. GET /santiago-companies/get-companies
+
+**Descripción:** Obtiene todas las empresas disponibles.
+
+**Respuesta Exitosa:**
+```json
+{
+  "companies": [
+    {
+      "id": "string",
+      "status": "string",
+      "name": "string",
+      "categoryCode": "string",
+      "categoryName": "string",
+      "creatioDate": "2025-10-28T21:29:33.231Z",
+      "email": "string",
+      "password": "string",
+      "companyPrice": "string",
+      "image": "string",
+      "imageP": "string",
+      "favorite": true,
+      "identifier": "string",
+      "identifierP": "string",
+      "commission": "string"
+    }
+  ],
+  "favorite": [...],
+  "generic": {...}
+}
+```
+
+---
+
+### 45. GET /santiago-companies/get-companies-regex
+
+**Descripción:** Obtiene empresas con búsqueda por regex.
+
+**Parámetros de Query:**
+- `regex` (string, requerido): Patrón de búsqueda
+- `idUser` (string, requerido): ID del usuario
+
+---
+
+### 46. GET /santiago-companies/get-companies-id
+
+**Descripción:** Obtiene una empresa por su ID.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID de la empresa
+
+---
+
+### 47. GET /santiago-companies/get-companies-category
+
+**Descripción:** Obtiene empresas filtradas por categoría con ubicación.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID de la categoría
+- `idUser` (string, requerido): ID del usuario
+- `latitud` (number, requerido): Latitud del usuario
+- `longitud` (number, requerido): Longitud del usuario
+
+---
+
+### 48. GET /santiago-companies/get-companies-app
+
+**Descripción:** Obtiene empresas de una aplicación específica.
+
+**Parámetros de Query:**
+- `categoryCode` (string, requerido): Código de categoría
+
+**Respuesta Exitosa:**
+```json
+{
+  "business": [
+    {
+      "id": "string",
+      "backgroundImg": "string",
+      "img": "string",
+      "kmDistance": 0,
+      "name": "string",
+      "categoryName": "string",
+      "companyPrice": "string",
+      "points": 0,
+      "deliveryTime": 0
+    }
+  ],
+  "generic": {...}
+}
+```
+
+---
+
+### 49. GET /santiago-companies/get-branches
+
+**Descripción:** Obtiene todas las sucursales de una empresa.
+
+**Parámetros de Query:**
+- `companyid` (string, requerido): ID de la empresa
+
+**Respuesta Exitosa:**
+```json
+{
+  "branches": [
+    {
+      "id": "string",
+      "sectorName": "string",
+      "wpp": "string",
+      "tel": "string",
+      "password": "string",
+      "lat": 0,
+      "lng": 0,
+      "menu": "string",
+      "status": true,
+      "tiempo": "string",
+      "precio": "string",
+      "horario": "string",
+      "isCurrentlyOpen": true,
+      "temporaryClosureReason": "string",
+      "temporaryClosureUntil": "string",
+      "todaySchedule": {...},
+      "company": {...}
+    }
+  ],
+  "generic": {...}
+}
+```
+
+---
+
+### 50. GET /santiago-companies/get-branches-nearest
+
+**Descripción:** Obtiene la sucursal más cercana a unas coordenadas específicas.
+
+**Parámetros de Query:**
+- `companyid` (string, requerido): ID de la empresa
+- `lat` (number, requerido): Latitud
+- `lng` (number, requerido): Longitud
+
+---
+
+### 51. GET /santiago-companies/get-branches-app
+
+**Descripción:** Obtiene sucursales de una app específica.
+
+**Parámetros de Query:**
+- `companyid` (string, requerido): ID de la empresa
+
+---
+
+### 52. GET /santiago-companies/get-branch-data
+
+**Descripción:** Obtiene información completa de una sucursal.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID de la sucursal
+
+---
+
+### 53. POST /santiago-companies/new-company
+
+**Descripción:** Crea una nueva empresa.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 54. POST /santiago-companies/login-companies
+
+**Descripción:** Inicia sesión como empresa.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 55. POST /santiago-companies/token-expo
+
+**Descripción:** Agrega un token de Expo para notificaciones push.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 56. POST /santiago-companies/fav-op
+
+**Descripción:** Agrega o elimina una empresa de favoritos.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 57. POST /santiago-companies/add-starts
+
+**Descripción:** Agrega puntuaciones a una empresa de usuario y de moto.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 58. POST /santiago-companies/add-branch
+
+**Descripción:** Crea una nueva sucursal.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 59. PUT /santiago-companies/logout/{id}
+
+**Descripción:** Cierra sesión como empresa.
+
+**Parámetros de Path:**
+- `id` (string): ID de la empresa
+
+---
+
+### 60. PUT /santiago-companies/edit-company
+
+**Descripción:** Edita la información de una empresa.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 61. PUT /santiago-companies/edit-branch
+
+**Descripción:** Edita la información de una sucursal.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 62. PUT /santiago-companies/edit-branch-status/{id}
+
+**Descripción:** Edita el estatus de una sucursal.
+
+**Parámetros de Path:**
+- `id` (string): ID de la sucursal
+
+---
+
+### 63. PUT /santiago-companies/company-favorite-op/{id}
+
+**Descripción:** Agrega o quita una empresa de favoritos.
+
+**Parámetros de Path:**
+- `id` (string): ID de la empresa
+
+---
+
+### 64. DELETE /santiago-companies/delete-company
+
+**Descripción:** Elimina una empresa permanentemente.
+
+---
+
+### 65. DELETE /santiago-companies/delete-branch
+
+**Descripción:** Elimina una sucursal permanentemente.
+
+---
+
+## 🗂️ Categorías de Producto
+
+### 66. GET /santiago-catprod/get-category-products
+
+**Descripción:** Obtiene categorías de productos con todos sus datos.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID de la sucursal
+- `idUser` (string, requerido): ID del usuario
+
+---
+
+### 67. GET /santiago-catprod/get-category-products-data
+
+**Descripción:** Obtiene datos completos de categorías de productos.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID de la sucursal
+- `idUser` (string, requerido): ID del usuario
+
+---
+
+### 68. POST /santiago-catprod/add-category-products
+
+**Descripción:** Crea una nueva categoría de productos.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 69. POST /santiago-catprod/add-promo-extra/{id}
+
+**Descripción:** Crea promociones y extras con el ID de la sucursal.
+
+**Parámetros de Path:**
+- `id` (string): ID de la sucursal
+
+---
+
+### 70. PUT /santiago-catprod/edit-category-products
+
+**Descripción:** Edita una categoría de productos existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 71. DELETE /santiago-catprod/status-category-products/{id}
+
+**Descripción:** Cambia el estatus de una categoría de productos.
+
+**Parámetros de Path:**
+- `id` (string): ID de la categoría
+
+---
+
+### 72. DELETE /santiago-catprod/delete-category-products/{id}
+
+**Descripción:** Elimina una categoría de productos.
+
+**Parámetros de Path:**
+- `id` (string): ID de la categoría
+
+---
+
+## 📂 Categorías
+
+### 73. GET /santiago-categories/get-category
+
+**Descripción:** Obtiene todas las categorías disponibles.
+
+**Respuesta Exitosa:**
+```json
+{
+  "categories": [
+    {
+      "name": "string",
+      "categoryCode": "string",
+      "url": "string"
+    }
+  ],
+  "generic": {...}
+}
+```
+
+---
+
+### 74. POST /santiago-categories/add-category
+
+**Descripción:** Crea una nueva categoría.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 75. PUT /santiago-categories/edit-category
+
+**Descripción:** Edita una categoría existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 76. PUT /santiago-categories/delete-category
+
+**Descripción:** Elimina una categoría.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+## 📱 Apps
+
+### 77. GET /santiago-app/get-data-id
+
+**Descripción:** Obtiene información de categoría por ID.
+
+**Parámetros de Query:**
+- `id` (string, requerido): ID de la categoría
+- `idUser` (string, requerido): ID del usuario
+
+---
+
+### 78. GET /santiago-app/get-data-app
+
+**Descripción:** Obtiene todas las apps configuradas.
+
+**Respuesta Exitosa:**
+```json
+{
+  "appsData": [
+    {
+      "id": "string",
+      "name": "string",
+      "portName": "string",
+      "estatus": 0,
+      "dataBranch": [...]
+    }
+  ],
+  "generic": {...}
+}
+```
+
+---
+
+### 79. GET /santiago-app/get-data-all
+
+**Descripción:** Obtiene toda la información de categorías de empresas.
+
+**Parámetros de Query:**
+- `idUser` (string, requerido): ID del usuario
+- `latitud` (number, requerido): Latitud
+- `longitud` (number, requerido): Longitud
+
+---
+
+### 80. POST /santiago-app/new-app
+
+**Descripción:** Crea una nueva aplicación.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 81. POST /santiago-app/add-branch-app
+
+**Descripción:** Agrega una sucursal a una aplicación.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 82. PUT /santiago-app/edit-app
+
+**Descripción:** Edita una aplicación existente.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 83. PUT /santiago-app/change-status-app
+
+**Descripción:** Cambia el estatus de una aplicación.
+
+**Headers:**
+```
+Content-Type: application/json
+```
+
+---
+
+### 84. DELETE /santiago-app/quit-branch-app
+
+**Descripción:** Quita una sucursal de una aplicación.
+
+---
+
+### 85. DELETE /santiago-app/quit-app/{id}
+
+**Descripción:** Elimina una aplicación.
+
+**Parámetros de Path:**
+- `id` (string): ID de la aplicación
+
+---
+
+## 🔍 Búsqueda
+
+### 86. GET /santiago-search/suggestions
+
+**Descripción:** Obtiene sugerencias de búsqueda basadas en la query.
+
+**Parámetros de Query:**
+- `query` (string, requerido): Término de búsqueda
+
+**Respuesta Exitosa:**
+```json
+[
+  "string"
+]
+```
+
+---
+
+### 87. GET /santiago-search/preloaded-suggestions
+
+**Descripción:** Obtiene sugerencias pre-cargadas para el buscador.
+
+---
+
+## 🏬 Branch (Sucursales)
+
+### 88. GET /santiago-branches/get-branches
+
+**Descripción:** Obtiene sucursales con paginación.
+
+**Parámetros de Query:**
+- `empresas` (object, requerido): Objeto con filtros
+  ```json
+  {
+    "id": "string",
+    "latitud": 0,
+    "longitud": 0,
+    "tipo": 0,
+    "regex": "string",
+    "page": 0,
+    "size": 0
+  }
+  ```
+
+**Respuesta Exitosa:**
+```json
+{
+  "totalElements": 0,
+  "totalPages": 0,
+  "size": 0,
+  "content": [
+    {
+      "branch": {
+        "image": "string",
+        "imageP": "string",
+        "name": "string",
+        "branch": {...},
+        "price": "string",
+        "tiempo": "string",
+        "collection": [...],
+        "idCatProd": "string"
+      },
+      "status": "string"
+    }
+  ],
+  "number": 0,
+  "sort": {...},
+  "numberOfElements": 0,
+  "pageable": {...},
+  "first": true,
+  "last": true,
+  "empty": true
+}
+```
+
+---
+
+### 89. GET /santiago-branches/get-branches-search
+
+**Descripción:** Obtiene sucursales con búsqueda avanzada.
+
+**Parámetros:** Misma estructura que `/get-branches`
+
+---
+
+## 📊 Códigos de Error Comunes
+
+| Código | Descripción |
+|--------|-------------|
+| COD200 | Operación exitosa |
+| COD400 | Solicitud incorrecta |
+| COD404 | No encontrado |
+| COD500 | Error interno del servidor |
+
+---
+
+## 🔧 Información Técnica
+
+### **Stack Tecnológico**
+- **Framework:** Spring Boot
+- **Base de Datos:** MongoDB
+- **Lenguaje:** Java 17+
+- **ORM:** Spring Data MongoDB
+- **Documentación:** Swagger/OpenAPI
+- **Build Tool:** Maven
+
+### **Arquitectura**
+- **Patrón:** Microservicio
+- **API:** REST
+- **Validación:** Jakarta Validation
+- **Respuestas:** GenericBean estandarizado
+
+### **Configuración**
+- **Puerto:** 4010
+- **Context Path:** /santiago
+- **Swagger UI:** /api-docs
+- **Base de Datos:** MongoDB
+
+---
+
+## 📝 Notas Importantes
+
+1. **Autenticación:** Algunos endpoints requieren autenticación mediante tokens
+2. **Paginación:** Los endpoints de listado soportan paginación con `page` y `size`
+3. **Imágenes:** Se aceptan archivos multipart/form-data para carga de imágenes
+4. **Ubicación:** Los endpoints de sucursales utilizan coordenadas geográficas (lat/lng)
+5. **Horarios:** Sistema de horarios con soporte para cierre temporal
+6. **Estados:** Productos y sucursales tienen múltiples estados (activo, rechazado, etc.)
+7. **Favoritos:** Sistema de favoritos para usuarios y productos
+8. **Apps:** Configuración multi-app para diferentes verticales
+
+---
+
+## 🔗 Enlaces Útiles
+
+- **Swagger UI:** http://localhost:4010/api-docs
+- **Puerto:** 4010
+- **Base Path:** http://localhost:4010
+
+---
+
+## 📦 Schemas Principales
+
+### RequestUpdateProductVariableBean
+```json
+{
+  "id": "string",
+  "name": "string",
+  "canMany": true,
+  "required": true,
+  "instructions": "string",
+  "productsId": "string",
+  "quantity": 0
+}
+```
+
+### RequestPricingBean
+```json
+{
+  "name": "string",
+  "price": 0,
+  "pv": "string"
+}
+```
+
+### BranchBean
+```json
+{
+  "sectorName": "string",
+  "wpp": "string",
+  "tel": "string",
+  "password": "string",
+  "lat": 0,
+  "lng": 0,
+  "deliveryTime": "string"
+}
+```
+
+### ScheduleRequestBean
+```json
+{
+  "branchId": "string",
+  "dayOfWeek": "string",
+  "isOpen": true,
+  "timeSlots": [
+    {
+      "openTime": "string",
+      "closeTime": "string"
+    }
+  ]
+}
+```
+
+### ProductsCollection
+```json
+{
+  "id": "string",
+  "productCode": "string",
+  "name": "string",
+  "description": "string",
+  "url": "string",
+  "status": 0,
+  "statusAdmin": true,
+  "visibleItem": true,
+  "pricing": 0,
+  "promoPricing": 0,
+  "categoryProductId": "string",
+  "identifier": "string",
+  "reason": "string",
+  "rejected": true
+}
+```
+
+---
+
+**Última actualización:** Enero 2025  
+**Versión del documento:** 1.0.0
+

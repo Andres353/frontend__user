@@ -92,7 +92,12 @@ npm run type-check
 - `GET /get-directions/{userId}` - Obtener direcciones
 
 ### Facturación
-- `POST /add-facturacion` - Agregar datos de facturación
+- `POST /add-facturacion` - Agregar datos de facturación (legacy)
+- `POST /add-factura` - Crear nueva facturación
+- `PUT /edit-factura` - Editar facturación existente
+- `DELETE /delete-factura?id={id}` - Eliminar facturación
+- `GET /facturaciones-user?userid={userId}` - Obtener facturaciones del usuario
+- `POST /img` - Subir imagen de usuario
 
 ## 🎨 Componentes UI
 

@@ -1,17 +1,18 @@
-import { ReactNode } from 'react'
 import { Navigation } from './Navigation'
 import { Footer } from './Footer'
+import { useLocation, Outlet } from 'react-router-dom'
 
-interface LayoutProps {
-  children: ReactNode
-}
-
-export const Layout = ({ children }: LayoutProps) => {
+export const Layout = () => {
+  const location = useLocation()
+  
+  // No mostrar Navigation en la página Home ya que tiene su propio diseño
+  const showNavigation = location.pathname !== '/'
+  
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navigation />
+      {showNavigation && <Navigation />}
       <main className="flex-1">
-        {children}
+        <Outlet />
       </main>
       <Footer />
     </div>

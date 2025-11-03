@@ -16,9 +16,54 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      },
+      '/santiago-users': {
         target: 'http://localhost:3002',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '/santiago-users')
+        secure: false
+      },
+      '/pedidos-ms': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/companies': {
+        target: 'http://localhost:4010',
+        changeOrigin: true,
+        secure: false
+      },
+      '/santiago-companies': {
+        target: 'http://localhost:4010',
+        changeOrigin: true,
+        secure: false
+      },
+      '/santiago-branches': {
+        target: 'http://localhost:4010',
+        changeOrigin: true,
+        secure: false
+      },
+      '/santiago-categories': {
+        target: 'http://localhost:4010',
+        changeOrigin: true,
+        secure: false
+      },
+      '/santiago-prod': {
+        target: 'http://localhost:4010',
+        changeOrigin: true,
+        secure: false
+      },
+      '/santiago-pricing': {
+        target: 'http://localhost:4010',
+        changeOrigin: true,
+        secure: false
+      },
+      '/santiago-catprod': {
+        target: 'http://localhost:4010',
+        changeOrigin: true,
+        secure: false
       }
     }
   },
