@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { apiService } from '../../services/api'
@@ -13,74 +13,9 @@ interface GoogleLoginButtonProps {
 export const GoogleLoginButton = ({ onSuccess, onError }: GoogleLoginButtonProps) => {
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isButtonRendered, setIsButtonRendered] = useState(false)
+  const buttonRef = useRef<HTMLDivElement>(null)
   const { login } = useAuthStore()
-
-  // Cargar Google Script al montar el componente
-  useEffect(() => {
-    const loadGoogle = async () => {
-      try {
-        console.log('🔄 Cargando Google Identity Services...')
-        await loadGoogleScript()
-        console.log('✅ Google script cargado, inicializando...')
-        
-        // Configurar callback para manejar respuesta de Google
-        const handleGoogleResponse = (response: any) => {
-          console.log('Google response received:', response)
-          setIsLoading(true)
-          if (response.credential) {
-            validateGoogleTokenMutation.mutate(response.credential)
-          } else {
-            onError?.('No se recibió token de Google')
-            setIsLoading(false)
-          }
-        }
-        
-        initializeGoogle(handleGoogleResponse)
-        
-        // Renderizar el botón nativo de Google
-        if (window.google?.accounts?.id) {
-          const buttonDiv = document.getElementById('google-signin-button')
-          if (buttonDiv) {
-            console.log('🎨 Renderizando botón de Google...')
-            try {
-              // Calcular un ancho válido (GSI solo acepta valores numéricos entre 120 y 400)
-              const containerWidth = buttonDiv.offsetWidth || 0
-              const validWidth = Math.min(400, Math.max(120, containerWidth || 320))
-              window.google.accounts.id.renderButton(buttonDiv, {
-                theme: 'outline',
-                size: 'large',
-                text: 'continue_with',
-                shape: 'rectangular',
-                width: validWidth
-              })
-              console.log('✅ Botón de Google renderizado correctamente')
-            } catch (renderError) {
-              console.error('❌ Error al renderizar botón de Google:', renderError)
-              // Mostrar mensaje de error específico
-              buttonDiv.innerHTML = `
-                <div class="p-4 border border-red-300 rounded-md bg-red-50">
-                  <p class="text-red-800 text-sm">
-                    <strong>Error de configuración de Google:</strong><br>
-                    El origen actual (${window.location.origin}) no está autorizado.<br>
-                    <span class="text-xs">Contacta al administrador para agregar esta URL a Google Cloud Console.</span>
-                  </p>
-                </div>
-              `
-              onError?.('Error de configuración de Google OAuth')
-            }
-          }
-        }
-        
-        console.log('🚀 Google Login listo para usar')
-        setIsGoogleLoaded(true)
-      } catch (error) {
-        console.error('❌ Error loading Google script:', error)
-        onError?.('Error al cargar Google Login')
-      }
-    }
-
-    loadGoogle()
-  }, [onError])
 
   // Mutación para validar token de Google
   const validateGoogleTokenMutation = useMutation({
@@ -116,19 +51,23 @@ export const GoogleLoginButton = ({ onSuccess, onError }: GoogleLoginButtonProps
             if (originalToken) {
               await createGoogleUserMutation.mutateAsync(originalToken)
             } else {
+              setIsLoading(false)
               onError?.('No se pudo obtener el token de Google')
             }
           }
         } catch (error) {
           console.error('Error getting user data:', error)
+          setIsLoading(false)
           onError?.('Error al obtener datos del usuario')
         }
       } else {
+        setIsLoading(false)
         onError?.(response.msgError || 'Error en la validación de Google')
       }
     },
     onError: (error) => {
       console.error('Google token validation error:', error)
+      setIsLoading(false)
       onError?.('Error al validar token de Google')
     },
   })
@@ -165,74 +104,133 @@ export const GoogleLoginButton = ({ onSuccess, onError }: GoogleLoginButtonProps
           }
         } catch (error) {
           console.error('Error getting user data after creation:', error)
+          setIsLoading(false)
           onError?.('Error al obtener datos del usuario')
         }
       } else {
+        setIsLoading(false)
         onError?.(response.msgError || 'Error al crear usuario de Google')
       }
     },
     onError: (error) => {
       console.error('Google user creation error:', error)
+      setIsLoading(false)
       onError?.('Error al crear usuario de Google')
     },
   })
 
+  // Cargar Google Script al montar el componente
+  useEffect(() => {
+    const loadGoogle = async () => {
+      try {
+        console.log('🔄 Cargando Google Identity Services...')
+        await loadGoogleScript()
+        console.log('✅ Google script cargado, inicializando...')
+        
+        // Configurar callback para manejar respuesta de Google
+        const handleGoogleResponse = (response: any) => {
+          console.log('Google response received:', response)
+          setIsLoading(true)
+          if (response.credential) {
+            validateGoogleTokenMutation.mutate(response.credential)
+          } else {
+            onError?.('No se recibió token de Google')
+            setIsLoading(false)
+          }
+        }
+        
+        initializeGoogle(handleGoogleResponse)
+        
+        console.log('🚀 Google Login listo para usar')
+        setIsGoogleLoaded(true)
+      } catch (error) {
+        console.error('❌ Error loading Google script:', error)
+        onError?.('Error al cargar Google Login')
+      }
+    }
 
-  if (!isGoogleLoaded) {
-    return (
-      <div className="w-full">
-        <button
-          disabled
-          className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 cursor-not-allowed"
-        >
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500 mr-2"></div>
-          Inicializando Google Login...
-        </button>
-        <p className="text-xs text-gray-400 mt-1 text-center">
-          Cargando servicios de Google...
-        </p>
-      </div>
-    )
-  }
+    loadGoogle()
+  }, [onError, validateGoogleTokenMutation])
+
+  // Renderizar el botón cuando Google esté cargado y el div esté disponible
+  // Usamos useLayoutEffect para asegurar que se ejecute después de que el DOM se actualice
+  useLayoutEffect(() => {
+    if (isGoogleLoaded && buttonRef.current && !isButtonRendered && window.google?.accounts?.id) {
+      const buttonDiv = buttonRef.current
+      
+      // Limpiar cualquier contenido previo
+      buttonDiv.innerHTML = ''
+      
+      console.log('🎨 Renderizando botón de Google...')
+      try {
+        // Calcular un ancho válido (GSI solo acepta valores numéricos entre 120 y 400)
+        // Usar requestAnimationFrame para asegurar que el layout esté completo
+        requestAnimationFrame(() => {
+          if (buttonDiv && window.google?.accounts?.id) {
+            const containerWidth = buttonDiv.offsetWidth || 0
+            const validWidth = Math.min(400, Math.max(120, containerWidth || 320))
+            
+            window.google.accounts.id.renderButton(buttonDiv, {
+              theme: 'outline',
+              size: 'large',
+              text: 'continue_with',
+              shape: 'rectangular',
+              width: validWidth
+            })
+            
+            console.log('✅ Botón de Google renderizado correctamente')
+            setIsButtonRendered(true)
+          }
+        })
+      } catch (renderError) {
+        console.error('❌ Error al renderizar botón de Google:', renderError)
+        // Mostrar mensaje de error específico
+        buttonDiv.innerHTML = `
+          <div class="p-4 border border-red-300 rounded-md bg-red-50">
+            <p class="text-red-800 text-sm">
+              <strong>Error de configuración de Google:</strong><br>
+              El origen actual (${window.location.origin}) no está autorizado.<br>
+              <span class="text-xs">Contacta al administrador para agregar esta URL a Google Cloud Console.</span>
+            </p>
+          </div>
+        `
+        onError?.('Error de configuración de Google OAuth')
+      }
+    }
+  }, [isGoogleLoaded, isButtonRendered, onError])
 
   return (
     <div className="w-full">
-      {isGoogleLoaded ? (
-        <div 
-          id="google-signin-button"
-          className="w-full"
-          style={{ 
-            display: isLoading ? 'none' : 'block' 
-          }}
-        />
-      ) : (
-        <button
-          disabled
-          className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 cursor-not-allowed"
-        >
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2"></div>
-          Cargando Google...
-        </button>
+      {/* El div siempre está presente para que el ref funcione, pero oculto mientras carga */}
+      <div 
+        ref={buttonRef}
+        className="w-full"
+        style={{ 
+          display: (isLoading || !isGoogleLoaded) ? 'none' : 'block',
+          minHeight: isGoogleLoaded && !isButtonRendered ? '40px' : 'auto'
+        }}
+      />
+      
+      {/* Mostrar estado de carga mientras Google se inicializa */}
+      {!isGoogleLoaded && (
+        <div className="w-full">
+          <button
+            disabled
+            className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 cursor-not-allowed"
+          >
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500 mr-2"></div>
+            Inicializando Google Login...
+          </button>
+          <p className="text-xs text-gray-400 mt-1 text-center">
+            Cargando servicios de Google...
+          </p>
+        </div>
       )}
       
       {isLoading && (
         <div className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-500 mr-2"></div>
           Iniciando sesión...
-        </div>
-      )}
-      
-      {/* Mensaje de ayuda para desarrollo */}
-      {!isGoogleLoaded && (
-        <div className="mt-4 p-4 border border-yellow-300 rounded-md bg-yellow-50">
-          <p className="text-yellow-800 text-sm">
-            <strong>⚠️ Google Login no disponible</strong>
-            <br />
-            <span className="text-xs">
-              Para habilitar Google Login, agrega <code className="bg-yellow-100 px-1 rounded">{window.location.origin}</code> 
-              a las URLs autorizadas en Google Cloud Console.
-            </span>
-          </p>
         </div>
       )}
     </div>

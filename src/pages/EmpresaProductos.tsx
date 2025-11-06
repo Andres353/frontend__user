@@ -6,11 +6,12 @@ import {
   ShoppingCartIcon, 
   ClockIcon,
   PlusIcon,
-  MinusIcon
+  MinusIcon,
+  MagnifyingGlassIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
-import { Input } from '@/components/ui/Input'
 import { LoadingPage } from '@/components/ui/Loading'
 import { apiService } from '@/services/api'
 import { useAuthStore } from '@/stores/authStore'
@@ -498,12 +499,38 @@ export const EmpresaProductos = () => {
 
         {/* Buscador */}
         <div className="mb-6">
-          <Input
-            placeholder="Buscar productos..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full"
-          />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+            </div>
+            <input
+              type="text"
+              placeholder="Buscar productos, categorías..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-12 py-4 text-base border-2 border-gray-200 rounded-xl 
+                         bg-white shadow-sm
+                         focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500
+                         hover:border-gray-300 transition-all duration-200
+                         placeholder:text-gray-400"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center 
+                         text-gray-400 hover:text-gray-600 transition-colors
+                         focus:outline-none focus:text-orange-500"
+                aria-label="Limpiar búsqueda"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
+            )}
+          </div>
+          {searchTerm && (
+            <p className="mt-2 text-sm text-gray-500">
+              Buscando: <span className="font-semibold text-orange-600">"{searchTerm}"</span>
+            </p>
+          )}
         </div>
 
         {/* Productos */}

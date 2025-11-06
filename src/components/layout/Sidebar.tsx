@@ -74,15 +74,14 @@ export const Sidebar = () => {
         <div className="px-6 mt-8">
           <h3 className="text-sm font-semibold text-gray-700 mb-3">Nuestras redes sociales</h3>
           <div className="flex space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+            <a 
+              href="https://www.facebook.com/share/17ghaJQvVQ/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors"
+            >
               <span className="text-white text-xs font-bold">f</span>
-            </div>
-            <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs">📷</span>
-            </div>
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs">♪</span>
-            </div>
+            </a>
           </div>
         </div>
 
@@ -92,8 +91,8 @@ export const Sidebar = () => {
             <p className="text-sm text-gray-600">
               <span className="font-medium text-orange-600">Soporte:</span>
               <br />
-              <a href="tel:078984335" className="text-orange-600 hover:underline">
-                078984335
+              <a href="tel:63884670" className="text-orange-600 hover:underline">
+                63884670
               </a>
             </p>
           </div>
